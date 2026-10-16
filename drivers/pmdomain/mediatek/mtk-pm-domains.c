@@ -17,6 +17,7 @@
 #include <linux/soc/mediatek/infracfg.h>
 
 #include "mt6795-pm-domains.h"
+#include "mt6781-pm-domains.h"
 #include "mt8167-pm-domains.h"
 #include "mt8173-pm-domains.h"
 #include "mt8183-pm-domains.h"
@@ -570,6 +571,14 @@ static const struct of_device_id scpsys_of_match[] = {
 	{
 		.compatible = "mediatek,mt6795-power-controller",
 		.data = &mt6795_scpsys_data,
+	},
+	{
+		.compatible = "mediatek,mt6781-power-controller",
+		.data = &mt6781_scpsys_data,
+	},
+	{
+		.compatible = "mediatek,mt6781-scpsys",
+		.data = &mt6781_scpsys_data,
 	},
 	{
 		.compatible = "mediatek,mt8167-power-controller",

@@ -111,3 +111,7 @@ obj-$(CONFIG_BATTERY_SURFACE)	+= surface_battery.o
 obj-$(CONFIG_CHARGER_SURFACE)	+= surface_charger.o
 obj-$(CONFIG_BATTERY_UG3105)	+= ug3105_battery.o
 obj-$(CONFIG_CHARGER_QCOM_SMB2)	+= qcom_pmi8998_charger.o
+obj-$(CONFIG_CHARGER_CLASS)	+= charger_class.o
+obj-$(CONFIG_CHARGER_BQ2589X)	+= bq2589x_charger.o
+obj-$(CONFIG_MTK_BQ2597X_CHARGER) += bq2597x_charger.o
+obj-$(CONFIG_MTK_MT6358_BATTERY) += mt6358_battery.o

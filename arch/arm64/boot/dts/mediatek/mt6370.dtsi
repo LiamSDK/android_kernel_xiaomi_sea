@@ -1,0 +1,155 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* MediaTek MT6370 SubPMIC (Charger, ADC, Flashlight, Backlight, DSV, LDO) bindings for Kernel 6.6 */
+
+&i2c5 {
+    mt6370: mt6370@34 {
+        compatible = "mediatek,mt6370";
+        reg = <0x34>;
+        status = "okay";
+        interrupt-parent = <&pio>;
+        interrupts = <0x4 0x8 0x4 0x0>;
+        interrupt-controller;
+        #interrupt-cells = <0x1>;
+        wakeup-source;
+        mt6370_adc: adc {
+            #io-channel-cells = <0x1>;
+            compatible = "mediatek,mt6370-adc";
+        };
+        regulators {
+            dsvbst {
+                regulator-name = "mt6370-dsv-vbst";
+                regulator-min-microvolt = <0x3d0900>;
+                regulator-max-microvolt = <0x5e9ac0>;
+            };
+            dsvpos {
+                regulator-name = "dsv_pos";
+                regulator-min-microvolt = <0x3d0900>;
+                regulator-max-microvolt = <0x5b8d80>;
+            };
+            dsvneg {
+                regulator-name = "dsv_neg";
+                regulator-min-microvolt = <0x3d0900>;
+                regulator-max-microvolt = <0x5b8d80>;
+            };
+            vibldo {
+                regulator-name = "mt6370-vib-ldo";
+                regulator-min-microvolt = <0x186a00>;
+                regulator-max-microvolt = <0x3d0900>;
+            };
+        };
+        mt6370_chg: charger {
+            compatible = "mediatek,mt6370-charger";
+            interrupts = <0x30 0x44 0x6 0x4 0xf 0x1b 0x20 0x23 0x25 0x27 0x37>;
+            interrupt-names = "attach_i", "uvp_d_evt", "mivr", "treg", "vbusov", "tmri", "aiclmeasi", "wdtmri", "rechgi", "ieoci", "dcdti";
+            io-channels = <&mt6370_adc 0x0 &mt6370_adc 0x1 &mt6370_adc 0x2 &mt6370_adc 0x3 &mt6370_adc 0x4 &mt6370_adc 0x5 &mt6370_adc 0x6 &mt6370_adc 0x7 &mt6370_adc 0x8>;
+            boot_mode = <0x41>;
+            charger_name = "primary_chg";
+            load_switch_name = "primary_load_switch";
+            ichg = <0x1e8480>;
+            aicr = <0x7a120>;
+            mivr = <0x432380>;
+            cv = <0x426030>;
+            ieoc = <0x249f0>;
+            safety_timer = <0xc>;
+            dc_wdt = <0x3d0900>;
+            ircmp_resistor = <0x61a8>;
+            ircmp_vclamp = <0x7d00>;
+            enable_te;
+            enable_wdt;
+            enable_otg_wdt;
+            lbp_hys_sel = <0x1>;
+            lbp_dt = <0x1>;
+            bc12_sel = <0x8c>;
+            phys = <0x8d 0x3>;
+            phy-names = "usb2-phy";
+            usb = <0x8e>;
+            otg_vbus: usb-otg-vbus-regulator {
+                regulator-name = "usb-otg-vbus";
+                regulator-min-microvolt = <0x426030>;
+                regulator-max-microvolt = <0x588040>;
+                regulator-min-microamp = <0x7a120>;
+                regulator-max-microamp = <0x2dc6c0>;
+            };
+        };
+        mt6370_backlight: backlight {
+            compatible = "mediatek,mt6370-backlight";
+            default-brightness = <0x200>;
+            mediatek,bled-channel-use = [0f];
+            mediatek,bled-exponential-mode-enable;
+        };
+        indicator {
+            compatible = "mediatek,mt6370-indicator";
+            #address-cells = <0x1>;
+            #size-cells = <0x0>;
+            multi-led@0 {
+                reg = <0x0>;
+                function = "indicator";
+                color = <0x9>;
+                led-max-microamp = <0x5dc0>;
+                #address-cells = <0x1>;
+                #size-cells = <0x0>;
+                led@0 {
+                    reg = <0x0>;
+                    color = <0x1>;
+                };
+                led@1 {
+                    reg = <0x1>;
+                    color = <0x2>;
+                };
+                led@2 {
+                    reg = <0x2>;
+                    color = <0x3>;
+                };
+            };
+            led@3 {
+                reg = <0x3>;
+                function = "indicator";
+                color = <0x0>;
+                led-max-microamp = <0x1770>;
+            };
+        };
+        flashlight {
+            compatible = "mediatek,mt6370-flashlight";
+            #address-cells = <0x1>;
+            #size-cells = <0x0>;
+            led@0 {
+                reg = <0x0>;
+                led-sources = <0x0>;
+                function = "flash";
+                color = <0x0>;
+                function-enumerator = <0x1>;
+                led-max-microamp = <0x30d40>;
+                flash-max-microamp = <0x7a120>;
+                flash-max-timeout-us = <0x249f00>;
+                type = <0x0>;
+                ct = <0x0>;
+                part = <0x0>;
+                port@0 {
+                    fl_core_0: endpoint {
+                        remote-endpoint = <&flashlight_0>;
+                    };
+                };
+            };
+            led@1 {
+                reg = <0x1>;
+                led-sources = <0x1>;
+                function = "flash";
+                color = <0x0>;
+                function-enumerator = <0x2>;
+                led-max-microamp = <0x30d40>;
+                flash-max-microamp = <0x7a120>;
+                flash-max-timeout-us = <0xfa000>;
+                type = <0x0>;
+                ct = <0x1>;
+                part = <0x0>;
+                port@1 {
+                    fl_core_1: endpoint {
+                        remote-endpoint = <&flashlight_1>;
+                    };
+                };
+            };
+        };
+    };
+};
+
+#include "mt6370_pd.dtsi"

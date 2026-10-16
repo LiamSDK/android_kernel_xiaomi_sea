@@ -1169,6 +1169,17 @@ config REGULATOR_RT5120
 	help
 	  This adds support for voltage regulator in Richtek RT5120 PMIC.
 	  It integrates 4 channels buck controller, 1 channel LDO, 1 EXTEN
+	  power control.
+
+config REGULATOR_RT5133
+	tristate "Richtek RT5133 PMIC Regulators"
+	depends on I2C
+	select REGMAP_I2C
+	select CRC8
+	select MTK_EXTDEV_IO_CLASS
+	help
+	  This adds support for voltage regulators in Richtek RT5133 PMIC.
+	  It provides 8 LDO channels with over-current and power-good monitoring.
 	  to control external power source. Only BUCK1 is adjustable from
 	  600mV to 1395mV, per step 6.250mV. The others are all fixed voltage
 	  by external hardware circuit.

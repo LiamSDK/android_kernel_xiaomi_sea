@@ -72,6 +72,13 @@ config MTK_SCPSYS_PM_DOMAINS
 	  Control Processor System (SCPSYS) has several power management related
 	  tasks in the system.
 
+config MTK_SCPSYS_DISABLE_UNUSED
+	tristate "MediaTek SCPSYS power domain disable unused"
+	depends on MTK_SCPSYS_PM_DOMAINS
+	default m
+	help
+	  Say m/y here to disable unused power domains during boot.
+
 config MTK_MMSYS
 	tristate "MediaTek MMSYS Support"
 	default ARCH_MEDIATEK
@@ -90,5 +97,19 @@ config MTK_SVS
 	  voltage to different power domains(CPU/GPU/CCI) according to
 	  chip process corner, temperatures and other factors. Then DVFS
 	  driver could apply SVS bank voltage to PMIC/Buck.
+
+config MTK_DVFSRC
+	tristate "MediaTek DVFSRC Support"
+	depends on ARCH_MEDIATEK || COMPILE_TEST
+	help
+	  This driver provides support for the MediaTek Dynamic Voltage
+	  and Frequency Scaling Resource Collector (DVFSRC).
+
+config MTK_DVFSRC_OPP_MT6781
+	tristate "MediaTek MT6781 DVFSRC SPMFW OPP init driver"
+	depends on MTK_DVFSRC
+	help
+	  This driver initializes SPM firmware OPP and DDR step frequencies
+	  for MediaTek MT6781.
 
 endmenu

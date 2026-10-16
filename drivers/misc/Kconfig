@@ -595,5 +595,13 @@ source "drivers/misc/bcm-vk/Kconfig"
 source "drivers/misc/cardreader/Kconfig"
 source "drivers/misc/uacce/Kconfig"
 source "drivers/misc/pvpanic/Kconfig"
-source "drivers/misc/mchp_pci1xxxx/Kconfig"
+config MTK_EXTDEV_IO_CLASS
+	tristate "MediaTek / Richtek Extdev IO class support"
+	default m
+	help
+	  This option enables support for the Richtek / MediaTek Extdev IO
+	  class used by PMIC / regulator debug and communication drivers.
+
+source "drivers/misc/mediatek/Kconfig"
+
 endmenu

@@ -802,6 +802,14 @@ config MEDIATEK_MT6360_ADC
 	  is used in smartphones and tablets and supports a 11 channel
 	  general purpose ADC.
 
+config MEDIATEK_MT635X_AUXADC
+	tristate "MediaTek MT635x AUXADC driver"
+	depends on MFD_MT6397 || COMPILE_TEST
+	help
+	  Say yes here to enable MediaTek MT635x PMIC AUXADC support.
+	  This provides ADC channels for thermal sensors, battery and voltage monitoring.
+	  If built as a module, it will be called "mt635x-auxadc".
+
 config MEDIATEK_MT6370_ADC
 	tristate "MediaTek MT6370 ADC driver"
 	depends on MFD_MT6370

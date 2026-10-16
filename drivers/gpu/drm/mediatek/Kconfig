@@ -32,3 +32,14 @@ config DRM_MEDIATEK_HDMI
 	select SND_SOC_HDMI_CODEC if SND_SOC
 	help
 	  DRM/KMS HDMI driver for Mediatek SoCs
+
+config MTK_PANEL_EXT
+	tristate "MediaTek DRM Panel Extension Infrastructure"
+	depends on DRM_MEDIATEK
+	help
+	  Extension infrastructure for MediaTek DRM panel drivers.
+
+config MTK_DISP_NOTIFY
+	tristate "MediaTek Display Notifier Chain"
+	help
+	  Display notification chain for MediaTek displays.

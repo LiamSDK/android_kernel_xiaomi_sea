@@ -1,0 +1,58 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Richtek RT1711H TCPC Configuration bindings for MediaTek MT6781 on Kernel 6.6 */
+
+&i2c9 {
+    rt1711_typec: rt1711h@4e {
+        compatible = "richtek,rt1711h";
+        reg = <0x4e>;
+        status = "okay";
+        rt-tcpc,name = "type_c_port0";
+        rt-tcpc,role-def = <0x5>;
+        rt-tcpc,rp-level = <0x1>;
+        rt-tcpc,vconn-supply = <&gic>;
+        rt1711pd,intr-gpio = <&pio 6 GPIO_ACTIVE_HIGH>;
+        rt1711pd,intr-gpio-num = <0x6>;
+        pd-data {
+            pd,vid = <0x29cf>;
+            pd,pid = <0x1711>;
+            pd,source-cap-ext = [cf 29 11 17 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 02 00];
+            pd,sink-cap-ext = <0xcf291117 0x0 0x100 0x0 0x10b010a 0xa000000>;
+            pd,mfrs = "RichtekTCPC";
+            pd,charging-policy = <0x31>;
+            pd,source-pdo-size = <0x1>;
+            pd,source-pdo-data = <0x19032>;
+            pd,sink-pdo-size = <0x1>;
+            pd,sink-pdo-data = <0x190c8>;
+            pd,id-vdo-size = <0x6>;
+            pd,id-vdo-data = <0xd14029cf 0x0 0x17110000 0x61000000 0x0 0x41000000>;
+            bat,nr = <0x1>;
+            pd,country-nr = <0x0>;
+            bat-info0 {
+                bat,vid = <0x29cf>;
+                bat,pid = <0x1711>;
+                bat,mfrs = "bat1";
+                bat,design-cap = <0xbb8>;
+            };
+        };
+        dpm-caps {
+            local-dr-power;
+            local-dr-data;
+            local-usb-comm;
+            local-no-suspend;
+            pr-check = <0x0>;
+            dr-check = <0x0>;
+        };
+        displayport {
+            1st-connection = "dfp-d";
+            2nd-connection = "dfp-d";
+            typec,receptacle;
+            ufp-d {
+            };
+            dfp-d {
+                pin-assignment,mode-c;
+                pin-assignment,mode-d;
+                pin-assignment,mode-e;
+            };
+        };
+    };
+};

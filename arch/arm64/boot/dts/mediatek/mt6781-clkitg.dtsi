@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* MediaTek MT6781 Unused Clocks & PM Domains Control bindings for Kernel 6.6 */
+
+/ {
+    disable_unused: disable_unused {
+        compatible = "simple-bus";
+        status = "okay";
+        disable-unused-clk-mmsys {
+            compatible = "mediatek,clk-disable-unused";
+            clocks = <&mmsys_config 0x2 &mmsys_config 0x0 &mmsys_config 0x19 &mmsys_config 0x4 &mmsys_config 0x3 &mmsys_config 0x7 &mmsys_config 0x9 &mmsys_config 0x8 &mmsys_config 0xd &mmsys_config 0xe &mmsys_config 0x10 &mmsys_config 0xc &mmsys_config 0x13 &mmsys_config 0x18 &mmsys_config 0x5>;
+        };
+        disable-unused-clk-infracfg_ao {
+            compatible = "mediatek,clk-disable-unused";
+            clocks = <&infracfg_ao INFRACFG_AO_DEVICE_APC_CG &infracfg_ao INFRACFG_AO_CQ_DMA_CG &infracfg_ao INFRACFG_AO_GCE_CG &infracfg_ao INFRACFG_AO_GCE_26M_CG &infracfg_ao INFRACFG_AO_GCE_CG &infracfg_ao INFRACFG_AO_FADSP_26M_CG &infracfg_ao INFRACFG_AO_FADSP_32K_CG &infracfg_ao INFRACFG_AO_FADSP_CG &infracfg_ao INFRACFG_AO_AUXADC_CG &infracfg_ao INFRACFG_AO_AP_DMA_CG &infracfg_ao INFRACFG_AO_UART0_CG &infracfg_ao INFRACFG_AO_UART1_CG &infracfg_ao INFRACFG_AO_AP_DMA_CG &infracfg_ao INFRACFG_AO_PWM1_CG &infracfg_ao INFRACFG_AO_PWM2_CG &infracfg_ao INFRACFG_AO_PWM3_CG &infracfg_ao INFRACFG_AO_PWM_HCLK_CG &infracfg_ao INFRACFG_AO_PWM_CG &infracfg_ao INFRACFG_AO_SPI0_CG &infracfg_ao INFRACFG_AO_THERM_CG &infracfg_ao INFRACFG_AO_BTIF_CG &infracfg_ao INFRACFG_AO_AP_DMA_CG &infracfg_ao INFRACFG_AO_SPI1_CG &infracfg_ao INFRACFG_AO_SPI2_CG &infracfg_ao INFRACFG_AO_SPI3_CG &infracfg_ao INFRACFG_AO_SPI4_CG &infracfg_ao INFRACFG_AO_SPI5_CG &infracfg_ao INFRACFG_AO_AUDIO_CG &infracfg_ao INFRACFG_AO_AUDIO_26M_BCLK_CK &infracfg_ao INFRACFG_AO_MSDC0_CG &infracfg_ao INFRACFG_AO_MSDC0_SCK_CG &infracfg_ao INFRACFG_AO_MSDCFDE_CG &infracfg_ao INFRACFG_AO_MSDC1_CG &infracfg_ao INFRACFG_AO_MSDC1_SCK_CG &infracfg_ao INFRACFG_AO_UFS_CG &infracfg_ao INFRACFG_AO_UNIPRO_SCK_CG &infracfg_ao INFRACFG_AO_UFS_MP_SAP_BCLK_CG &infracfg_ao INFRACFG_AO_AES_UFS_CG &infracfg_ao INFRACFG_AO_ICUSB_CG &infracfg_ao INFRACFG_AO_DISP_PWM_CG &infracfg_ao INFRACFG_AO_CCIF4_AP_CG>;
+        };
+        disable-unused-clk-topckgen {
+            compatible = "mediatek,clk-disable-unused";
+            clocks = <&topckgen TOP_MAINPLL_D2_D4 &topckgen TOP_MAINPLL_D5 &topckgen TOP_MAINPLL_D2_D2 &topckgen TOP_MAINPLL_D3 &topckgen TOP_UNIVPLL_D3 &topckgen TOP_MUX_SENINF &topckgen TOP_MUX_SENINF1 &topckgen TOP_MUX_SENINF2 &topckgen TOP_MUX_SENINF3 &topckgen APMIXED_CCIPLL &topckgen APMIXED_MAINPLL &topckgen APMIXED_UNIV2PLL &topckgen APMIXED_MSDCPLL &topckgen APMIXED_ADSPPLL &topckgen APMIXED_MMPLL &topckgen APMIXED_MFGPLL &topckgen TOP_UNIVP_192M_D32 &topckgen TOP_UNIVP_192M_D16 &topckgen TOP_UNIVPLL_D3_D32 &topckgen TOP_UNIVP_192M_D8 &topckgen TOP_UNIVP_192M_D4 &topckgen TOP_UNIVPLL_D3_D8 &topckgen TOP_MUX_CAMTM &topckgen TOP_MUX_ADSP &topckgen TOP_ADSPPLL_CK &topckgen TOP_MAINPLL_D5 &topckgen APMIXED_APLL2 &topckgen APMIXED_MDPLLGP26M &topckgen APMIXED_MMSYS_F26M &topckgen TOP_MAINPLL_D2_D4 &topckgen APMIXED_UFS26M &topckgen TOP_APLL1_CK &topckgen APMIXED_MIPIC1_26M &topckgen TOP_APLL2_CK &topckgen APMIXED_MEMPLL26M &topckgen TOP_APLL1_D8 &topckgen APMIXED_CLKSQ_LVPLL_26M &topckgen TOP_APLL2_D8 &topckgen TOP_I2S0_M_SEL &topckgen TOP_I2S1_M_SEL &topckgen TOP_I2S2_M_SEL &topckgen TOP_I2S3_M_SEL &topckgen TOP_I2S4_M_SEL &topckgen TOP_I2S5_M_SEL &topckgen TOP_APLL12_DIV0 &topckgen TOP_APLL12_DIV1 &topckgen TOP_APLL12_DIV2 &topckgen TOP_APLL12_DIV3 &topckgen TOP_APLL12_DIV4 &topckgen TOP_APLL12_DIVB &topckgen TOP_APLL12_DIV5 &topckgen TOP_MUX_AUDIO_H &topckgen APMIXED_SSUSB26M &topckgen APMIXED_MIPIC0_26M &topckgen TOP_MUX_USB_TOP &topckgen TOP_UNIVPLL_D5_D2 &topckgen APMIXED_ARMPLL_BB &topckgen TOP_MFGPLL_CK &topckgen TOP_MAINPLL_D5 &topckgen APMIXED_MIPID0_26M &topckgen TOP_OSC_D8 &topckgen TOP_MUX_DISP &topckgen TOP_MUX_CAM &topckgen TOP_MUX_IMG1 &topckgen TOP_MUX_IPE &topckgen TOP_MUX_VENC &topckgen TOP_MUX_VDEC &topckgen TOP_MUX_MDP &topckgen TOP_MMPLL_CK &topckgen TOP_MAINPLL_D2 &topckgen TOP_UNIVPLL_D3 &topckgen TOP_UNIVPLL_D2_D2>;
+        };
+    };
+};

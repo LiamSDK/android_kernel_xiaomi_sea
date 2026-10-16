@@ -7,3 +7,5 @@ obj-$(CONFIG_MTK_REGULATOR_COUPLER) += mtk-regulator-coupler.o
 obj-$(CONFIG_MTK_MMSYS) += mtk-mmsys.o
 obj-$(CONFIG_MTK_MMSYS) += mtk-mutex.o
 obj-$(CONFIG_MTK_SVS) += mtk-svs.o
+obj-$(CONFIG_MTK_DVFSRC) += mtk-dvfsrc.o
+obj-$(CONFIG_MTK_DVFSRC_OPP_MT6781) += dvfsrc-opp-mt6781.o

@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Redmi Note 12S (sea / mt6781) Awinic AW87xxx SmartPA I2C6 bindings for Kernel 6.6 */
+
+&i2c6 {
+    aw87xxx_pa@5B {
+        compatible = "awinic,aw87xxx_pa";
+        reg = <0x5b>;
+        reset-gpio = <&pio 0xa4 0x0>;
+        dev_index = <0x0>;
+        status = "okay";
+    };
+    aw87xxx_pa@58 {
+        compatible = "awinic,aw87xxx_pa";
+        reg = <0x58>;
+        reset-gpio = <&pio 0xa5 0x0>;
+        dev_index = <0x1>;
+        status = "okay";
+    };
+};

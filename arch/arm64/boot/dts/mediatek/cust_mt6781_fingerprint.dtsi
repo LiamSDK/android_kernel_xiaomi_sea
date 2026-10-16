@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Redmi Note 12S (sea / mt6781) Goodix GF / FPC SPI0 Fingerprint & EINT/SPI pinmux bindings for Kernel 6.6 */
+
+&spi0 {
+    #address-cells = <0x1>;
+    #size-cells = <0x0>;
+    fpc_tee@0 {
+        compatible = "fpc,fpc_spi";
+        reg = <0x0>;
+        fpc,enable-wakeup;
+        spi-max-frequency = <0x989680>;
+        netlink-event = <0x1f>;
+        status = "okay";
+    };
+};
+
+&fpsensor_finger {
+    pinctrl-names = "fpsensor_fpc_rst_low", "fpsensor_fpc_rst_high", "fpsensor_fpc_power_low", "fpsensor_fpc_power_high";
+    pinctrl-0 = <&fpsensor_fpc_rst_low>;
+    pinctrl-1 = <&fpsensor_fpc_rst_high>;
+    pinctrl-2 = <&fpsensor_fpc_power_low>;
+    pinctrl-3 = <&fpsensor_fpc_power_high>;
+    status = "okay";
+};
+
+&pio {
+    fpsensor_fpc_rst_low: fpsensor_fpc_rst_low {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO7__FUNC_GPIO7>;
+            slew-rate = <0x1>;
+            output-low;
+        };
+    };
+    fpsensor_fpc_rst_high: fpsensor_fpc_rst_high {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO7__FUNC_GPIO7>;
+            slew-rate = <0x1>;
+            output-high;
+        };
+    };
+    fpsensor_fpc_power_low: fpsensor_fpc_power_low {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO56__FUNC_GPIO56>;
+            slew-rate = <0x1>;
+            output-low;
+        };
+    };
+    fpsensor_fpc_power_high: fpsensor_fpc_power_high {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO56__FUNC_GPIO56>;
+            slew-rate = <0x1>;
+            output-high;
+        };
+    };
+};

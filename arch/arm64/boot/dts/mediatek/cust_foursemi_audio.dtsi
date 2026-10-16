@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Redmi Note 12S (sea / mt6781) FourSemi FS16xx SmartPA I2C6 bindings for Kernel 6.6 */
+
+&i2c6 {
+    fs16xx@34 {
+        compatible = "foursemi,fs16xx";
+        reg = <0x34>;
+        fsm,rst-gpio = <&pio 0xa5 0x0>;
+        status = "okay";
+    };
+    fs16xx@35 {
+        compatible = "foursemi,fs16xx";
+        reg = <0x35>;
+        fsm,rst-gpio = <&pio 0xa4 0x0>;
+        status = "okay";
+    };
+};

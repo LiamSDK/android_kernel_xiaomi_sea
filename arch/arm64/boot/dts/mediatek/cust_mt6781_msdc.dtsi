@@ -1,0 +1,148 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* MediaTek MT6781 MSDC / eMMC / SD Card Pinctrl bindings for Kernel 6.6 */
+
+&pio {
+    mmc0_pins_default: mmc0default {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO72__FUNC_MSDC0_DAT0 PINMUX_GPIO73__FUNC_MSDC0_DAT1 PINMUX_GPIO74__FUNC_MSDC0_DAT2 PINMUX_GPIO75__FUNC_MSDC0_DAT3 PINMUX_GPIO76__FUNC_MSDC0_DAT4 PINMUX_GPIO77__FUNC_MSDC0_DAT5 PINMUX_GPIO78__FUNC_MSDC0_DAT6 PINMUX_GPIO79__FUNC_MSDC0_DAT7 PINMUX_GPIO70__FUNC_MSDC0_CMD>;
+            input-enable;
+            drive-strength = <0x4>;
+            bias-pull-up = <0x65>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_clk {
+            input-enable;
+            pinmux = <PINMUX_GPIO69__FUNC_MSDC0_CLK>;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_ds {
+            input-enable;
+            pinmux = <PINMUX_GPIO68__FUNC_MSDC0_DSL>;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_rst {
+            input-enable;
+            pinmux = <PINMUX_GPIO71__FUNC_MSDC0_RSTB>;
+            drive-strength = <0x4>;
+            bias-pull-up = <0x65>;
+            input-schmitt-enable = <0x1>;
+        };
+    };
+    mmc0_pins_uhs: mmc0@0 {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO72__FUNC_MSDC0_DAT0 PINMUX_GPIO73__FUNC_MSDC0_DAT1 PINMUX_GPIO74__FUNC_MSDC0_DAT2 PINMUX_GPIO75__FUNC_MSDC0_DAT3 PINMUX_GPIO76__FUNC_MSDC0_DAT4 PINMUX_GPIO77__FUNC_MSDC0_DAT5 PINMUX_GPIO78__FUNC_MSDC0_DAT6 PINMUX_GPIO79__FUNC_MSDC0_DAT7 PINMUX_GPIO70__FUNC_MSDC0_CMD>;
+            input-enable;
+            drive-strength = <0x4>;
+            bias-pull-up = <0x65>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_clk {
+            input-enable;
+            pinmux = <PINMUX_GPIO69__FUNC_MSDC0_CLK>;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_ds {
+            input-enable;
+            pinmux = <PINMUX_GPIO68__FUNC_MSDC0_DSL>;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_rst {
+            input-enable;
+            pinmux = <PINMUX_GPIO71__FUNC_MSDC0_RSTB>;
+            drive-strength = <0x4>;
+            bias-pull-up = <0x65>;
+            input-schmitt-enable = <0x1>;
+        };
+    };
+    mmc0_pins_pull_down: mmc0@1 {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO72__FUNC_MSDC0_DAT0 PINMUX_GPIO73__FUNC_MSDC0_DAT1 PINMUX_GPIO74__FUNC_MSDC0_DAT2 PINMUX_GPIO75__FUNC_MSDC0_DAT3 PINMUX_GPIO76__FUNC_MSDC0_DAT4 PINMUX_GPIO77__FUNC_MSDC0_DAT5 PINMUX_GPIO78__FUNC_MSDC0_DAT6 PINMUX_GPIO79__FUNC_MSDC0_DAT7 PINMUX_GPIO70__FUNC_MSDC0_CMD>;
+            input-enable;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_clk {
+            input-enable;
+            pinmux = <PINMUX_GPIO69__FUNC_MSDC0_CLK>;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_ds {
+            input-enable;
+            pinmux = <PINMUX_GPIO68__FUNC_MSDC0_DSL>;
+            drive-strength = <0x4>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_rst {
+            input-enable;
+            pinmux = <PINMUX_GPIO71__FUNC_MSDC0_RSTB>;
+            drive-strength = <0x4>;
+            bias-pull-up = <0x65>;
+            input-schmitt-enable = <0x1>;
+        };
+    };
+    mmc1_pins_default: mmc1default {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO87__FUNC_MSDC1_DAT0 PINMUX_GPIO88__FUNC_MSDC1_DAT1 PINMUX_GPIO89__FUNC_MSDC1_DAT2 PINMUX_GPIO90__FUNC_MSDC1_DAT3 PINMUX_GPIO86__FUNC_MSDC1_CMD>;
+            input-enable;
+            bias-pull-up = <0x66>;
+            drive-strength = <0x3>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_clk {
+            input-enable;
+            pinmux = <PINMUX_GPIO85__FUNC_MSDC1_CLK>;
+            drive-strength = <0x3>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_insert {
+            input-enable;
+            pinmux = <PINMUX_GPIO9__FUNC_GPIO9>;
+            bias-pull-up;
+            input-schmitt-enable = <0x1>;
+        };
+    };
+    mmc1_pins_uhs: mmc1@0 {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO87__FUNC_MSDC1_DAT0 PINMUX_GPIO88__FUNC_MSDC1_DAT1 PINMUX_GPIO89__FUNC_MSDC1_DAT2 PINMUX_GPIO90__FUNC_MSDC1_DAT3 PINMUX_GPIO86__FUNC_MSDC1_CMD>;
+            input-enable;
+            bias-pull-up = <0x66>;
+            drive-strength = <0x3>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_clk {
+            input-enable;
+            pinmux = <PINMUX_GPIO85__FUNC_MSDC1_CLK>;
+            drive-strength = <0x3>;
+            input-schmitt-enable = <0x1>;
+        };
+    };
+    mmc1_pins_pull_down: mmc1@1 {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO87__FUNC_MSDC1_DAT0 PINMUX_GPIO88__FUNC_MSDC1_DAT1 PINMUX_GPIO89__FUNC_MSDC1_DAT2 PINMUX_GPIO90__FUNC_MSDC1_DAT3 PINMUX_GPIO86__FUNC_MSDC1_CMD>;
+            input-enable;
+            bias-pull-down = <0x66>;
+            drive-strength = <0x3>;
+            input-schmitt-enable = <0x1>;
+        };
+        pins_clk {
+            input-enable;
+            pinmux = <PINMUX_GPIO85__FUNC_MSDC1_CLK>;
+            drive-strength = <0x3>;
+            bias-pull-down = <0x66>;
+            input-schmitt-enable = <0x1>;
+        };
+    };
+};

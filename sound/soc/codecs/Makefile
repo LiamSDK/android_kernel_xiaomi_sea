@@ -772,3 +772,8 @@ obj-$(CONFIG_SND_SOC_LPASS_TX_MACRO)	+= snd-soc-lpass-tx-macro.o
 
 # Mux
 obj-$(CONFIG_SND_SOC_SIMPLE_MUX)	+= snd-soc-simple-mux.o
+
+# SmartPA
+obj-$(CONFIG_SND_SOC_FS18XX)	+= fs1815/
+obj-$(CONFIG_SND_SOC_AW87XXX)	+= aw87xxx/
+

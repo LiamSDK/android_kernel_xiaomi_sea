@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* MediaTek MT6781 Battery Manager & GM3.0 Fuel Gauge bindings for Kernel 6.6 */
+
+/ {
+    battery_manager: battery-manager {
+        compatible = "mediatek,battery manager";
+        gauge1 = <0x82>;
+        bootmode = <0x41>;
+    };
+    battery: battery {
+        compatible = "mediatek,mt6375-charger-cooler";
+        #cooling-cells = <0x2>;
+    };
+};

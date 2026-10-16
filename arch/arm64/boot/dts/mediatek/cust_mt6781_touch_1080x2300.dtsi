@@ -1,0 +1,58 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Redmi Note 12S (sea / mt6781) Touch 1080x2400 resolution & EINT/RST pinmux bindings for Kernel 6.6 */
+
+&touch {
+    tpd-resolution = <0x438 0x870>;
+    lcm-resolution = <0x438 0x870>;
+    tpd-cfg-version = "config19";
+    tpd-max-touch-num = <0xa>;
+    interrupt-parent = <&pio>;
+    interrupts = <0x1 0x2 0x1 0x0>;
+    focaltech,eint-gpio = <&pio 0xf 0x0>;
+    focaltech,reset-gpio = <&pio 0x10 0x0>;
+    tpd-filter-enable = <0x0>;
+    tpd-filter-pixel-density = <0xa8>;
+    tpd-filter-custom-prameters = <0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0>;
+    tpd-filter-custom-speed = <0x0 0x0 0x0>;
+    status = "disabled";
+};
+
+&pio {
+    ctp_pins_default: eintdefault {
+    };
+    ctp_ts_int_active: int_active {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO15__FUNC_GPIO15>;
+            input-enable;
+        };
+    };
+    ctp_ts_reset_active: reset_active {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO16__FUNC_GPIO16>;
+            output-high;
+        };
+    };
+    ctp_ts_int_suspend: int_suspend {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO15__FUNC_GPIO15>;
+            output-low;
+        };
+    };
+    ctp_ts_reset_suspend: reset_suspend {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO16__FUNC_GPIO16>;
+            output-low;
+        };
+    };
+    ctp_ts_i2c_mode: i2cmode_default {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO144__FUNC_SCL0 PINMUX_GPIO145__FUNC_SDA0>;
+        };
+    };
+    ctp_ts_int_as_gpio: int_high {
+        pins_cmd_dat {
+            pinmux = <PINMUX_GPIO15__FUNC_GPIO15>;
+            output-high;
+        };
+    };
+};

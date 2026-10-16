@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config INTERCONNECT_MEDIATEK
+	tristate "MediaTek interconnect drivers"
+	depends on ARCH_MEDIATEK || COMPILE_TEST
+	help
+	  Support for MediaTek On-Chip Interconnect bus drivers.
+
+config INTERCONNECT_MTK_EMI
+	tristate "MediaTek EMI interconnect driver"
+	depends on INTERCONNECT_MEDIATEK
+	help
+	  This driver provides support for the MediaTek EMI interconnect
+	  provider which manages DDR bandwidth votes and communicates
+	  with the DVFSRC hardware.
+
+config INTERCONNECT_MTK_MMQOS_COMMON
+	tristate "MediaTek MMQoS Common Driver"
+	depends on INTERCONNECT_MEDIATEK
+	help
+	  Common support for MediaTek Multimedia Quality of Service (MMQoS)
+	  interconnect provider and bandwidth throttling.
+
+config INTERCONNECT_MTK_MMQOS_MT6781
+	tristate "MediaTek MT6781 MMQoS interconnect driver"
+	depends on INTERCONNECT_MTK_MMQOS_COMMON
+	help
+	  This driver provides support for the MediaTek MT6781 MMQoS interconnect
+	  provider managing LARBs and multimedia bandwidth.

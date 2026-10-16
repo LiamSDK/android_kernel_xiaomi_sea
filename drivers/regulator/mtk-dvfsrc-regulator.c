@@ -150,6 +150,21 @@ static const struct of_device_id mtk_dvfsrc_regulator_match[] = {
 		.compatible = "mediatek,mt6873-dvfsrc",
 		.data = &regulator_mt6873_data,
 	}, {
+		.compatible = "mediatek,mt6781-dvfsrc",
+		.data = &regulator_mt6873_data,
+	}, {
+		.compatible = "mediatek,mt6768-dvfsrc",
+		.data = &regulator_mt6873_data,
+	}, {
+		.compatible = "mediatek,mt6833-dvfsrc",
+		.data = &regulator_mt6873_data,
+	}, {
+		.compatible = "mediatek,mt6853-dvfsrc",
+		.data = &regulator_mt6873_data,
+	}, {
+		.compatible = "mediatek,mt6877-dvfsrc",
+		.data = &regulator_mt6873_data,
+	}, {
 		/* sentinel */
 	},
 };

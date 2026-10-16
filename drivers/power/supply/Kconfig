@@ -952,4 +952,30 @@ config CHARGER_QCOM_SMB2
 	  adds support for the SMB2 switch mode battery charger found
 	  in PMI8998 and related PMICs.
 
+config CHARGER_CLASS
+	tristate "Switching Charger Class Device"
+	default m
+	help
+	  Say Y here to enable support for switching charger class device.
+
+config CHARGER_BQ2589X
+	tristate "TI BQ2589x battery charger"
+	depends on I2C
+	select CHARGER_CLASS
+	help
+	  Say Y here to enable support for TI BQ2589x I2C battery charger.
+
+config MTK_BQ2597X_CHARGER
+	tristate "TI BQ2597x battery charger"
+	depends on I2C
+	select CHARGER_CLASS
+	help
+	  Say Y here to enable support for TI BQ2597x I2C flash charger.
+
+config MTK_MT6358_BATTERY
+	tristate "MediaTek MT6358/MT6366 Fuel Gauge Driver"
+	depends on MFD_MT6397
+	help
+	  Say Y here to enable support for MediaTek MT6358 and MT6366 battery fuel gauge.
+
 endif # POWER_SUPPLY

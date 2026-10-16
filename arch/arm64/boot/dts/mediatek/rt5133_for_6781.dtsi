@@ -1,0 +1,127 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Richtek RT5133 Camera PMIC LDO & GPIO bindings for MediaTek MT6781 on Kernel 6.6 */
+
+&odm {
+    rt5133_eint: rt5133-eint {
+    };
+    rt5133_gpio1: rt5133-gpio1 {
+        compatible = "regulator-fixed";
+        regulator-name = "rt5133-gpio1";
+        regulator-min-microvolt = <0x1b7740>;
+        regulator-max-microvolt = <0x1b7740>;
+        vin-supply = <&rt5133_ldo1>;
+        enable-active-high;
+        gpio = <0xc9 0x0 0x0>;
+    };
+    rt5133_gpio2: rt5133-gpio2 {
+        compatible = "regulator-fixed";
+        regulator-name = "rt5133-gpio2";
+        regulator-min-microvolt = <0x1b7740>;
+        regulator-max-microvolt = <0x1b7740>;
+        vin-supply = <&rt5133_ldo1>;
+        enable-active-high;
+        gpio = <0xc9 0x1 0x0>;
+    };
+    rt5133_gpio3: rt5133-gpio3 {
+        compatible = "regulator-fixed";
+        regulator-name = "rt5133-gpio3";
+        regulator-min-microvolt = <0x1b7740>;
+        regulator-max-microvolt = <0x1b7740>;
+        vin-supply = <&rt5133_ldo1>;
+        enable-active-high;
+        gpio = <0xc9 0x2 0x0>;
+    };
+};
+
+&i2c5 {
+    rt5133: rt5133@18 {
+        status = "ok";
+        compatible = "richtek,rt5133";
+        reg = <0x18>;
+        wakeup-source;
+        interrupts-extended = <0x34 0xb 0x2>;
+        enable-gpio = <&pio 25 GPIO_ACTIVE_HIGH>;
+        gpio-supply = <&rt5133_ldo1>;
+        gpio-controller;
+        #gpio-cells = <0x2>;
+        regulators {
+            rt5133_base: BASE {
+                regulator-name = "rt5133,base";
+                oc-shutdown-all = <0x0>;
+                pgb-shutdown-all = <0x0>;
+            };
+            rt5133_ldo1: LDO1 {
+                regulator-name = "rt5133-ldo1";
+                regulator-min-microvolt = <0x1b7740>;
+                regulator-max-microvolt = <0x1b7740>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo2: LDO2 {
+                regulator-name = "rt5133-ldo2";
+                regulator-min-microvolt = <0x1b7740>;
+                regulator-max-microvolt = <0x30d400>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo3: LDO3 {
+                regulator-name = "rt5133-ldo3";
+                regulator-min-microvolt = <0x19f0a0>;
+                regulator-max-microvolt = <0x2dc6c0>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo4: LDO4 {
+                regulator-name = "rt5133-ldo4";
+                regulator-min-microvolt = <0x19f0a0>;
+                regulator-max-microvolt = <0x2dc6c0>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo5: LDO5 {
+                regulator-name = "rt5133-ldo5";
+                regulator-min-microvolt = <0x19f0a0>;
+                regulator-max-microvolt = <0x2dc6c0>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo6: LDO6 {
+                regulator-name = "rt5133-ldo6";
+                regulator-min-microvolt = <0x19f0a0>;
+                regulator-max-microvolt = <0x2dc6c0>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo7: LDO7 {
+                regulator-name = "rt5133-ldo7";
+                regulator-min-microvolt = <0xdbba0>;
+                regulator-max-microvolt = <0x124f80>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+            rt5133_ldo8: LDO8 {
+                regulator-name = "rt5133-ldo8";
+                regulator-min-microvolt = <0xdbba0>;
+                regulator-max-microvolt = <0x124f80>;
+                regulator-active-discharge;
+                oc-ptsel = <0x1>;
+                pgb-ptsel = <0x1>;
+                soft-start-time-sel = <0x1>;
+            };
+        };
+    };
+};

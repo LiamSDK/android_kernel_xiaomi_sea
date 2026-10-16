@@ -1397,6 +1397,21 @@ config TOUCHSCREEN_HIMAX_HX83112B
 	  If unsure, say N.
 
 	  To compile this driver as a module, choose M here: the
-	  module will be called himax_hx83112b.
+config TOUCHSCREEN_XIAOMI_TOUCH
+	tristate "Xiaomi Touchscreen Framework Driver"
+	default m
+	help
+	  Common framework driver for Xiaomi touchscreens.
+
+config TOUCHSCREEN_FT3418_I2C
+	tristate "FocalTech FT3418 I2C Touchscreen Driver"
+	depends on I2C
+	depends on TOUCHSCREEN_XIAOMI_TOUCH
+	select MTK_PANEL_EXT
+	select MTK_DISP_NOTIFY
+	default m
+	help
+	  Say Y or M here to enable support for FocalTech FT3418 I2C touchscreens
+	  as used on Xiaomi Redmi Note 12S (sea).
 
 endif

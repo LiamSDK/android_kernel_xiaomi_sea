@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* MediaTek MT6358/MT6366 Fuel Gauge Dim2 Ext Profile Tables for Kernel 6.6 */
+
+&mtk_gauge {
+    compatible = "mediatek,mt6358-gauge";
+    io-channels = <&pmic_auxadc AUXADC_BAT_TEMP &pmic_auxadc AUXADC_BATADC &pmic_auxadc AUXADC_VBIF &pmic_auxadc AUXADC_IMP &pmic_auxadc AUXADC_IMIX_R &auxadc 0x4>;
+    io-channel-names = "pmic_battery_temp", "pmic_battery_voltage", "pmic_bif_voltage", "pmic_ptim_voltage", "pmic_ptim_r", "batteryID-channel";
+    nvmem-cell-names = "initialization", "state-of-charge";
+};

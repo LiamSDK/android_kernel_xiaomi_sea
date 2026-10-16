@@ -266,6 +266,27 @@ config COMMON_CLK_MT6779_AUDSYS
 	help
 	  This driver supports Mediatek MT6779 audsys clocks.
 
+config COMMON_CLK_MT6781
+	tristate "Clock driver for MediaTek MT6781"
+	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+	select COMMON_CLK_MEDIATEK
+	default ARCH_MEDIATEK && ARM64
+	help
+	  This driver supports MediaTek MT6781 clocks (topckgen, apmixed, infracfg, audio, cam, etc.) and power gates.
+
+config COMMON_CLK_MT6781_FMETER
+	tristate "Frequency meter clock driver for MediaTek MT6781"
+	depends on COMMON_CLK_MT6781
+	help
+	  This driver supports MediaTek MT6781 frequency meter clock verification.
+
+config COMMON_CLK_DISABLE_UNUSED
+	tristate "Clock driver to disable unused MediaTek clocks"
+	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+	default m
+	help
+	  This driver provides support for runtime PM and gating unused MediaTek clocks during boot.
+
 config COMMON_CLK_MT6795
 	tristate "Clock driver for MediaTek MT6795"
 	depends on ARCH_MEDIATEK || COMPILE_TEST

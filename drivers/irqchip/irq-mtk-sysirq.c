@@ -233,3 +233,4 @@ out_free_chip:
 	return ret;
 }
 IRQCHIP_DECLARE(mtk_sysirq, "mediatek,mt6577-sysirq", mtk_sysirq_of_init);
+IRQCHIP_DECLARE(mtk_sysirq_mt6781, "mediatek,mt6781-sysirq", mtk_sysirq_of_init);
