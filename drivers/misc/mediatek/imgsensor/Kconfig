@@ -1,5 +1,5 @@
 config MTK_IMGSENSOR
-	bool CONFIG_MTK_IMGSENSOR
+	bool "MediaTek Image Sensor Driver Support"
 	default n
 	help
 	  Kernel space image sensor driver. Define  project used all image

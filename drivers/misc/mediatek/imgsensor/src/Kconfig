@@ -1,5 +1,5 @@
 config SPECIFY_IMGSENSOR
-	bool SPECIFY_IMGSENSOR
+	bool "Specify Image Sensor"
 	depends on MTK_IMGSENSOR
 	help
 	  Specify name of each sensor to
