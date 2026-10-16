@@ -167,6 +167,9 @@
 #define logprint(fmt, args...)
 #endif // FSM_APP
 #endif // FSM_HAL_SUPPORT
+#ifndef pr_warning
+#define pr_warning pr_warn
+#endif
 #define pr_addr(type, fmt, args...) \
 		pr_##type("%02X: " fmt, fsm_dev->addr, ##args)
 
@@ -226,7 +229,9 @@ enum dev_id_index {
 
 #define FSM_DEV_MAX   (4)
 #define FSM_ADDR_BASE (0x34)
+#ifndef MIN
 #define MIN(a, b)     ((a) < (b) ? (a) : (b))
+#endif
 #define HIGH8(val)    ((val >> 8) & 0xFF)
 #define LOW8(val)     (val & 0xFF)
 #define WORD(addr)    ((*(addr) << 8) & *((addr) + 1))

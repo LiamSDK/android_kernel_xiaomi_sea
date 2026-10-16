@@ -12,7 +12,9 @@
 #include <linux/soc/mediatek/mtk_sip_svc.h>
 
 #define MTK_STREAM_NUM (SNDRV_PCM_STREAM_LAST + 1)
+#ifndef MTK_SIP_AUDIO_CONTROL
 #define MTK_SIP_AUDIO_CONTROL MTK_SIP_SMC_CMD(0x517)
+#endif
 
 /* SMC CALL Operations */
 enum mtk_audio_smc_call_op {
@@ -148,6 +150,18 @@ struct mtk_base_afe_memif {
 	unsigned char *dma_area;
 	dma_addr_t dma_addr;
 	size_t dma_bytes;
+
+	int using_sram;
+	int use_dram_only;
+	int use_adsp_share_mem;
+
+	bool vow_bargein_enable;
+	bool scp_spk_enable;
+	bool scp_ultra_enable;
+	int use_mmap_share_mem;
+
+	bool ack_enable;
+	int (*ack)(struct snd_pcm_substream *substream);
 };
 
 struct mtk_base_afe_irq {

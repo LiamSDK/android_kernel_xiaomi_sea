@@ -6,6 +6,9 @@
 #if defined(CONFIG_FSM_FIRMWARE)
 #include "fsm_public.h"
 #include <linux/firmware.h>
+#ifndef FW_ACTION_HOTPLUG
+#define FW_ACTION_HOTPLUG FW_ACTION_UEVENT
+#endif
 #include <linux/slab.h>
 
 static int g_fsm_fw_init = 0;

@@ -80,6 +80,8 @@ struct dvfsrc_opp_desc {
 	u32 size;
 };
 
+struct mtk_dvfsrc;
+
 struct dvfsrc_soc_data {
 	const int *regs;
 	u32 num_opp;

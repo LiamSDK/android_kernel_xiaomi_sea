@@ -8,6 +8,7 @@
 #include <linux/clk.h>
 #include <linux/regmap.h>
 #include <linux/mfd/syscon.h>
+#include <linux/io.h>
 #include <linux/arm-smccc.h> /* for Kernel Native SMC API */
 #include <mt-plat/mtk_secure_api.h> /* for SMC ID table */
 
@@ -872,8 +873,8 @@ int mt6781_init_clock(struct mtk_base_afe *afe)
 	}
 
 	/* TODO: change to use syscon */
-	APMIXEDSYS_ADDRESS = ioremap_nocache(APMIXEDSYS_BASE, 0x1000);
-	CKSYS_ADDRESS = ioremap_nocache(CKSYS_BASE, 0x1000);
+	APMIXEDSYS_ADDRESS = ioremap(APMIXEDSYS_BASE, 0x1000);
+	CKSYS_ADDRESS = ioremap(CKSYS_BASE, 0x1000);
 	// Added from mt6833-afe-clk.c
 	afe_priv->apmixed = syscon_regmap_lookup_by_phandle(afe->dev->of_node,
 							    "apmixed");

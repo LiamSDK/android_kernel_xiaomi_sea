@@ -1206,32 +1206,7 @@ static const struct mtk_pin_reg_calc mt6781_reg_cals[PINCTRL_PIN_REG_MAX] = {
 	[PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt6781_pin_pupd_range),
 	[PINCTRL_PIN_REG_R0] = MTK_RANGE(mt6781_pin_r0_range),
 	[PINCTRL_PIN_REG_R1] = MTK_RANGE(mt6781_pin_r1_range),
-	[PINCTRL_PIN_REG_DRV_EH] = MTK_RANGE(mt6781_pin_eh_range),
-};
-
-static const struct mtk_eh_pin_pinmux mt6781_eh_pin_pinmux_list[] = {
-	/* pin number, pinmux number */
-	{144, 1},
-	{145, 1},
-	{146, 1},
-	{147, 1},
-	{148, 1},
-	{149, 1},
-	{150, 1},
-	{151, 1},
-	{152, 1},
-	{153, 1},
-	{154, 1},
-	{155, 1},
-	{156, 1},
-	{157, 1},
-	{158, 1},
-	{159, 1},
-	{160, 1},
-	{161, 1},
-	{162, 1},
-	{163, 1},
-	{0xffff, 0}, /* indicate end of array */
+	[PINCTRL_PIN_REG_DRV_ADV] = MTK_RANGE(mt6781_pin_eh_range),
 };
 
 static const struct mtk_eint_hw mt6781_eint_hw = {

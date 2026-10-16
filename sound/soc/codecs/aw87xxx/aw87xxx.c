@@ -24,6 +24,9 @@
 #include <linux/device.h>
 #include <linux/irq.h>
 #include <linux/firmware.h>
+#ifndef FW_ACTION_HOTPLUG
+#define FW_ACTION_HOTPLUG FW_ACTION_UEVENT
+#endif
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/fs.h>

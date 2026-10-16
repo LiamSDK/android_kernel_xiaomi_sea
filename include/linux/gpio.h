@@ -122,6 +122,10 @@ void gpio_free_array(const struct gpio *array, size_t num);
 int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
 int devm_gpio_request_one(struct device *dev, unsigned gpio,
 			  unsigned long flags, const char *label);
+static inline void devm_gpio_free(struct device *dev, unsigned int gpio)
+{
+	gpio_free(gpio);
+}
 
 #else /* ! CONFIG_GPIOLIB */
 
@@ -222,6 +226,10 @@ static inline int devm_gpio_request_one(struct device *dev, unsigned gpio,
 {
 	WARN_ON(1);
 	return -EINVAL;
+}
+
+static inline void devm_gpio_free(struct device *dev, unsigned int gpio)
+{
 }
 
 #endif /* ! CONFIG_GPIOLIB */
