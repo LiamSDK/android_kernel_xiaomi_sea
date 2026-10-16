@@ -44,8 +44,13 @@ ifeq ($(CONFIG_MODULE_SIG_KEY),certs/signing_key.pem)
 
 keytype-$(CONFIG_MODULE_SIG_KEY_TYPE_ECDSA) := -newkey ec -pkeyopt ec_paramgen_curve:secp384r1
 
+sig-hash-y := $(CONFIG_MODULE_SIG_HASH)
+ifeq ($(sig-hash-y),)
+sig-hash-y := sha256
+endif
+
 quiet_cmd_gen_key = GENKEY  $@
-      cmd_gen_key = openssl req -new -nodes -utf8 -$(CONFIG_MODULE_SIG_HASH) -days 36500 \
+      cmd_gen_key = openssl req -new -nodes -utf8 -$(sig-hash-y) -days 36500 \
 		-batch -x509 -config $< \
 		-outform PEM -out $@ -keyout $@ $(keytype-y) 2>&1
 
