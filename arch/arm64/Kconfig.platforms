@@ -162,6 +162,13 @@ config ARCH_MEDIATEK
 	  This enables support for MediaTek MT27xx, MT65xx, MT76xx
 	  & MT81xx ARMv8 SoCs
 
+config MACH_MT6781
+	bool "MediaTek MT6781 SoC support"
+	depends on ARCH_MEDIATEK
+	default y
+	help
+	  This enables support for MediaTek MT6781 SoC platform.
+
 config ARCH_MESON
 	bool "Amlogic Platforms"
 	help

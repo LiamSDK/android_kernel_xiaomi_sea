@@ -3,8 +3,8 @@
  * Copyright (c) 2019 MediaTek Inc.
  */
 
-#include <stdbool.h>
-#include <stddef.h>
+#include <linux/types.h>
+#include <linux/stddef.h>
 
 #define VCORE_NULL	-1
 #define ADDR(rn)	(rn->base->virt + rn->ofs)

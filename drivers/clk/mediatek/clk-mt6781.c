@@ -19,6 +19,7 @@
 #include "clk-mtk.h"
 #include "clk-gate.h"
 #include "clk-mux.h"
+#include "clk-pll.h"
 #include "clk-mt6781-pg.h"
 
 #include <dt-bindings/clock/mt6781-clk.h>
@@ -1241,13 +1242,11 @@ const struct clk_ops mtk_clk_gate_ops_inv_dummy = {
 	.enable		= mtk_cg_enable_inv,
 	.disable	= mtk_cg_disable_inv_dummy,
 };
-/*
 const struct clk_ops mtk_clk_gate_ops_setclr_inv_dummy = {
 	.is_enabled	= mtk_cg_bit_is_set,
 	.enable		= mtk_cg_enable_inv,
 	.disable	= mtk_cg_disable_inv_dummy,
 };
-*/
 
 static const struct mtk_gate_regs infra0_cg_regs = {
 	.set_ofs = 0x80,
@@ -2424,7 +2423,7 @@ static const struct mtk_gate imp_clks[] = {
 
 static int mtk_topckgen_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2443,16 +2442,16 @@ static int mtk_topckgen_init(struct platform_device *pdev)
 		ARRAY_SIZE(fixed_clks), clk_data);
 
 	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
-	mtk_clk_register_muxes(top_muxes,
+	mtk_clk_register_muxes(&pdev->dev, top_muxes,
 		ARRAY_SIZE(top_muxes), node, &mt6781_clk_lock, clk_data);
-	mtk_clk_register_composites(top_audmuxes, ARRAY_SIZE(top_audmuxes),
+	mtk_clk_register_composites(&pdev->dev, top_audmuxes, ARRAY_SIZE(top_audmuxes),
 		base, &mt6781_clk_lock, clk_data);
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	cksys_base = base;
 
@@ -2505,7 +2504,7 @@ static int mtk_topckgen_init(struct platform_device *pdev)
 
 static int  mtk_infracfg_ao_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2520,15 +2519,15 @@ static int  mtk_infracfg_ao_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, infra_clks,
+	mtk_clk_register_gates(&pdev->dev, node, infra_clks,
 		ARRAY_SIZE(infra_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	infracfg_base = base;
 	#if 1
@@ -2712,7 +2711,7 @@ static const struct mtk_pll_data plls[] = {
 
 static int  mtk_apmixedsys_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2729,14 +2728,14 @@ static int  mtk_apmixedsys_init(struct platform_device *pdev)
 
 	/* FIXME: add code for APMIXEDSYS */
 	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-	mtk_clk_register_gates(node, apmixed_clks,
+	mtk_clk_register_gates(&pdev->dev, node, apmixed_clks,
 		ARRAY_SIZE(apmixed_clks), clk_data);
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	apmixed_base = base;
 	/* ARMPLL4, MPLL, CCIPLL, EMIPLL, MAINPLL */
@@ -2794,7 +2793,7 @@ static int  mtk_apmixedsys_init(struct platform_device *pdev)
 
 static int  mtk_audio_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2809,15 +2808,15 @@ static int  mtk_audio_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, audio_clks,
+	mtk_clk_register_gates(&pdev->dev, node, audio_clks,
 		ARRAY_SIZE(audio_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	audio_base = base;
 	return r;
@@ -2826,7 +2825,7 @@ static int  mtk_audio_init(struct platform_device *pdev)
 
 static int  mtk_camsys_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2840,14 +2839,14 @@ static int  mtk_camsys_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, cam_m_clks, ARRAY_SIZE(cam_m_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, cam_m_clks, ARRAY_SIZE(cam_m_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	cam_base = base;
 	return r;
@@ -2856,7 +2855,7 @@ static int  mtk_camsys_init(struct platform_device *pdev)
 
 static int  mtk_camsys_rawa_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2870,14 +2869,14 @@ static int  mtk_camsys_rawa_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, cam_ra_clks, ARRAY_SIZE(cam_ra_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, cam_ra_clks, ARRAY_SIZE(cam_ra_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	cam_ra_base = base;
 	return r;
@@ -2886,7 +2885,7 @@ static int  mtk_camsys_rawa_init(struct platform_device *pdev)
 
 static int mtk_camsys_rawb_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2900,14 +2899,14 @@ static int mtk_camsys_rawb_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, cam_rb_clks, ARRAY_SIZE(cam_rb_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, cam_rb_clks, ARRAY_SIZE(cam_rb_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	cam_rb_base = base;
 	return r;
@@ -2916,7 +2915,7 @@ static int mtk_camsys_rawb_init(struct platform_device *pdev)
 
 static int mtk_imgsys1_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2927,15 +2926,17 @@ static int mtk_imgsys1_init(struct platform_device *pdev)
 		return -EINVAL;
 	}
 	clk_data = mtk_alloc_clk_data(CLK_IMGSYS1_NR_CLK);
+	if (!clk_data)
+		return -ENOMEM;
 
-	mtk_clk_register_gates(node, imgsys1_clks, ARRAY_SIZE(imgsys1_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, imgsys1_clks, ARRAY_SIZE(imgsys1_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	img1_base = base;
 	return r;
@@ -2943,7 +2944,7 @@ static int mtk_imgsys1_init(struct platform_device *pdev)
 
 static int mtk_imgsys2_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2957,14 +2958,14 @@ static int mtk_imgsys2_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, imgsys2_clks, ARRAY_SIZE(imgsys2_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, imgsys2_clks, ARRAY_SIZE(imgsys2_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	img2_base = base;
 	return r;
@@ -2972,7 +2973,7 @@ static int mtk_imgsys2_init(struct platform_device *pdev)
 
 static int mtk_ipesys_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -2986,14 +2987,14 @@ static int mtk_ipesys_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, ipe_clks, ARRAY_SIZE(ipe_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, ipe_clks, ARRAY_SIZE(ipe_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	ipe_base = base;
 	return r;
@@ -3001,7 +3002,7 @@ static int mtk_ipesys_init(struct platform_device *pdev)
 
 static int mtk_mfg_cfg_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -3016,15 +3017,15 @@ static int mtk_mfg_cfg_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, mfg_cfg_clks,
+	mtk_clk_register_gates(&pdev->dev, node, mfg_cfg_clks,
 		ARRAY_SIZE(mfg_cfg_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	mfgcfg_base = base;
 
@@ -3036,7 +3037,7 @@ static int mtk_mfg_cfg_init(struct platform_device *pdev)
 
 static int  mtk_mmsys_config_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -3050,14 +3051,14 @@ static int  mtk_mmsys_config_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, mm_clks, ARRAY_SIZE(mm_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	mmsys_config_base = base;
 	return r;
@@ -3066,7 +3067,7 @@ static int  mtk_mmsys_config_init(struct platform_device *pdev)
 
 static int mtk_mdpsys_config_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -3080,14 +3081,14 @@ static int mtk_mdpsys_config_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, mdp_clks, ARRAY_SIZE(mdp_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, mdp_clks, ARRAY_SIZE(mdp_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	mdpsys_config_base = base;
 	return r;
@@ -3096,7 +3097,7 @@ static int mtk_mdpsys_config_init(struct platform_device *pdev)
 
 static int mtk_vdec_top_global_con_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -3110,15 +3111,15 @@ static int mtk_vdec_top_global_con_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, vdec_clks,
+	mtk_clk_register_gates(&pdev->dev, node, vdec_clks,
 		ARRAY_SIZE(vdec_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	vdec_gcon_base = base;
 	return r;
@@ -3127,7 +3128,7 @@ static int mtk_vdec_top_global_con_init(struct platform_device *pdev)
 
 static int mtk_venc_global_con_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -3141,15 +3142,15 @@ static int mtk_venc_global_con_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, venc_global_con_clks,
+	mtk_clk_register_gates(&pdev->dev, node, venc_global_con_clks,
 		ARRAY_SIZE(venc_global_con_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	venc_gcon_base = base;
 	return r;
@@ -3157,7 +3158,7 @@ static int mtk_venc_global_con_init(struct platform_device *pdev)
 
 static int mtk_imp_iic_wrap_init(struct platform_device *pdev)
 {
-	struct clk_onecell_data *clk_data;
+	struct clk_hw_onecell_data *clk_data;
 	void __iomem *base;
 	int r;
 	struct device_node *node = pdev->dev.of_node;
@@ -3171,14 +3172,14 @@ static int mtk_imp_iic_wrap_init(struct platform_device *pdev)
 	if (!clk_data)
 		return -ENOMEM;
 
-	mtk_clk_register_gates(node, imp_clks, ARRAY_SIZE(imp_clks), clk_data);
+	mtk_clk_register_gates(&pdev->dev, node, imp_clks, ARRAY_SIZE(imp_clks), clk_data);
 
-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
 
 	if (r) {
 		pr_notice("%s(): could not register clock provider: %d\n",
 			__func__, r);
-		kfree(clk_data);
+		mtk_free_clk_data(clk_data);
 	}
 	imp_base = base;
 	return r;

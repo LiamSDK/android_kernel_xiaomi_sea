@@ -240,7 +240,7 @@ static u32 mt6781_get_abist2_freq(u32 id)
 	return 0;
 }
 
-static u32 mt6781_get_fmeter_freq(u32 id, enum FMETER_TYPE type)
+static u32 __maybe_unused mt6781_get_fmeter_freq(u32 id, enum FMETER_TYPE type)
 {
 	if (type == CKGEN)
 		return mt6781_get_ckgen_freq(id);
@@ -252,7 +252,7 @@ static u32 mt6781_get_fmeter_freq(u32 id, enum FMETER_TYPE type)
 	return 0;
 }
 
-static u32 mt6781_get_fmeter_id(const char *name)
+static u32 __maybe_unused mt6781_get_fmeter_id(const char *name)
 {
 	int i;
 

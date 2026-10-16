@@ -4,6 +4,8 @@
  */
 
 
+#include <linux/init.h>
+#include <linux/module.h>
 #include <linux/clk-provider.h>
 #include <linux/syscore_ops.h>
 #include <linux/version.h>

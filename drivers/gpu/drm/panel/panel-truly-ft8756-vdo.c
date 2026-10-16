@@ -21,9 +21,12 @@
 #include <video/videomode.h>
 
 #include <linux/module.h>
+#include <linux/delay.h>
 #include <linux/of_platform.h>
 #include <linux/of_graph.h>
 #include <linux/platform_device.h>
+
+#define DDPINFO(fmt, ...) pr_info("[LCM] " fmt, ##__VA_ARGS__)
 
 #define CONFIG_MTK_PANEL_EXT
 #if defined(CONFIG_MTK_PANEL_EXT)
@@ -728,7 +731,6 @@ static struct drm_display_mode default_mode = {
 	.vsync_start = VAC + VFP,
 	.vsync_end = VAC + VFP + VSA,
 	.vtotal = VAC + VFP + VSA + VBP,
-	.vrefresh = 60,
 };
 
 #if defined(CONFIG_MTK_PANEL_EXT)
@@ -847,24 +849,25 @@ struct panel_desc {
 	} delay;
 };
 
-static int lcm_get_modes(struct drm_panel *panel)
+static int lcm_get_modes(struct drm_panel *panel,
+			 struct drm_connector *connector)
 {
 	struct drm_display_mode *mode;
 
-	mode = drm_mode_duplicate(panel->drm, &default_mode);
+	mode = drm_mode_duplicate(connector->dev, &default_mode);
 	if (!mode) {
-		dev_err(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
+		dev_err(panel->dev, "failed to add mode %ux%ux@%u\n",
 			default_mode.hdisplay, default_mode.vdisplay,
-			default_mode.vrefresh);
+			drm_mode_vrefresh(&default_mode));
 		return -ENOMEM;
 	}
 
 	drm_mode_set_name(mode);
 	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-	drm_mode_probed_add(panel->connector, mode);
+	drm_mode_probed_add(connector, mode);
 
-	panel->connector->display_info.width_mm = 68;
-	panel->connector->display_info.height_mm = 146;
+	connector->display_info.width_mm = 68;
+	connector->display_info.height_mm = 146;
 
 	return 1;
 }
@@ -912,7 +915,7 @@ static int lcm_probe(struct mipi_dsi_device *dsi)
 	dsi->lanes = 4;
 	dsi->format = MIPI_DSI_FMT_RGB888;
 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO
-			 | MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET
+			 | MIPI_DSI_MODE_LPM
 			 | MIPI_DSI_CLOCK_NON_CONTINUOUS;
 
 	backlight = of_parse_phandle(dev->of_node, "backlight", 0);
@@ -959,9 +962,7 @@ static int lcm_probe(struct mipi_dsi_device *dsi)
 	ctx->panel.dev = dev;
 	ctx->panel.funcs = &lcm_drm_funcs;
 
-	ret = drm_panel_add(&ctx->panel);
-	if (ret < 0)
-		return ret;
+	drm_panel_add(&ctx->panel);
 
 	ret = mipi_dsi_attach(dsi);
 	if (ret < 0)
@@ -979,14 +980,12 @@ static int lcm_probe(struct mipi_dsi_device *dsi)
 	return ret;
 }
 
-static int lcm_remove(struct mipi_dsi_device *dsi)
+static void lcm_remove(struct mipi_dsi_device *dsi)
 {
 	struct lcm *ctx = mipi_dsi_get_drvdata(dsi);
 
 	mipi_dsi_detach(dsi);
 	drm_panel_remove(&ctx->panel);
-
-	return 0;
 }
 
 static const struct of_device_id lcm_of_match[] = {

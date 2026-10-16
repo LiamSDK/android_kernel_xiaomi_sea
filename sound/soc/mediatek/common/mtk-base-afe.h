@@ -70,9 +70,11 @@ struct mtk_base_memif_data {
 	/* playback memif only */
 	int pbuf_reg;
 	int pbuf_mask;
+	int pbuf_mask_shift;
 	int pbuf_shift;
 	int minlen_reg;
 	int minlen_mask;
+	int minlen_mask_shift;
 	int minlen_shift;
 };
 
@@ -137,6 +139,7 @@ struct mtk_base_afe {
 	int (*request_dram_resource)(struct device *dev);
 	int (*release_dram_resource)(struct device *dev);
 
+	void *sram;
 	void *platform_priv;
 };
 

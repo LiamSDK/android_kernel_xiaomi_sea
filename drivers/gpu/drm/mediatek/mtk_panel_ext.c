@@ -7,6 +7,7 @@
 #include <linux/err.h>
 #include <linux/module.h>
 #include <linux/slab.h>
+#include <linux/device.h>
 #include <drm/drm_panel.h>
 
 #include "mtk_panel_ext.h"
