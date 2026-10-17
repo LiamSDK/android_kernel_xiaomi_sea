@@ -43,7 +43,7 @@
 static int
 fl_async_bound(struct v4l2_async_notifier *notifier,
 		 struct v4l2_subdev *subdev,
-		 struct v4l2_async_subdev *asd)
+		 struct v4l2_async_connection *asc)
 {
 	struct mtk_composite_v4l2_device *pfdev =
 			container_of(notifier->v4l2_dev,
@@ -51,10 +51,10 @@ fl_async_bound(struct v4l2_async_notifier *notifier,
 	bool found = false;
 	int i;
 
-	for (i = 0; i < ARRAY_SIZE(pfdev->asd); i++) {
-		if (pfdev->asd[i]->match.fwnode ==
-			asd[0].match.fwnode) {
+	for (i = 0; i < ARRAY_SIZE(pfdev->asc); i++) {
+		if (pfdev->asc[i] && &pfdev->asc[i]->asc == asc) {
 			pfdev->sd[i] = subdev;
+			pfdev->asc[i]->sd = subdev;
 			found = true;
 			break;
 		}
@@ -108,25 +108,21 @@ static int fl_async_complete(struct v4l2_async_notifier *notifier)
 	return fl_probe_complete(pfdev);
 }
 
-
-static struct v4l2_async_subdev *
-mtk_get_pdata(struct platform_device *pdev,
+static int
+mtk_composite_parse_dt(struct platform_device *pdev,
 	struct mtk_composite_v4l2_device *pfdev)
 {
 	struct device_node *endpoint = NULL;
-	struct v4l2_async_subdev *pdata[MISC_MAX_SUBDEVS] = {0};
-	struct v4l2_async_notifier *notifier;
-	unsigned int i;
+	unsigned int i = 0;
 
 	if (!IS_ENABLED(CONFIG_OF) || !pdev->dev.of_node) {
 		pr_info("pdev->dev.of_node %p\n", pdev->dev.of_node);
-		return pdev->dev.platform_data;
+		return -EINVAL;
 	}
 
-	notifier = &pfdev->notifier;
-
-	for (i = 0; ; i++) {
+	for (i = 0; i < MISC_MAX_SUBDEVS; i++) {
 		struct device_node *rem;
+		struct mtk_composite_async_subdev *casc;
 
 		endpoint = of_graph_get_next_endpoint(pdev->dev.of_node,
 						endpoint);
@@ -137,39 +133,40 @@ mtk_get_pdata(struct platform_device *pdev,
 		if (!rem) {
 			pr_info("Remote device at %s not found\n",
 				endpoint->full_name);
-			goto done;
+			continue;
 		}
 
-		pdata[i] = devm_kzalloc(&pdev->dev,
-				sizeof(struct v4l2_async_subdev),
-				GFP_KERNEL);
-		if (!pdata[i]) {
-			of_node_put(rem);
-		pr_info("i %d, pdata %p\n", i, pdata[i]);
-			goto done;
-		}
-		pr_debug("rem %p, pdata[i] %p, name %s, full_name %s\n",
-				rem, pdata[i], rem->name, rem->full_name);
-		pdata[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
-		pdata[i]->match.fwnode = of_fwnode_handle(rem);
+		casc = v4l2_async_nf_add_fwnode(&pfdev->notifier,
+						of_fwnode_handle(rem),
+						struct mtk_composite_async_subdev);
 		of_node_put(rem);
-		notifier->num_subdevs++;
-		pfdev->asd[i] = pdata[i];
+		if (IS_ERR(casc)) {
+			pr_info("i %u, failed to add async subdev %ld\n",
+				i, PTR_ERR(casc));
+			of_node_put(endpoint);
+			return PTR_ERR(casc);
+		}
+
+		pr_debug("casc[%u] %p, fwnode %p\n", i, casc, casc->asc.match.fwnode);
+		pfdev->asc[i] = casc;
 	}
 
 	of_node_put(endpoint);
-	return pdata[0];
-
-done:
-	of_node_put(endpoint);
-	return NULL;
+	return 0;
 }
 
 static void mtk_composite_unregister_entities(
 		struct mtk_composite_v4l2_device *isp)
 {
 	v4l2_device_unregister(&isp->v4l2_dev);
-	media_device_unregister(&isp->media_dev);
+#if defined(CONFIG_MEDIA_CONTROLLER)
+	if (isp->v4l2_dev.mdev) {
+		media_device_unregister(isp->v4l2_dev.mdev);
+		media_device_cleanup(isp->v4l2_dev.mdev);
+		kfree(isp->v4l2_dev.mdev);
+		isp->v4l2_dev.mdev = NULL;
+	}
+#endif
 }
 
 static const struct v4l2_async_notifier_operations fl_async_notify_ops = {
@@ -193,23 +190,18 @@ static int mtk_composite_probe(struct platform_device *dev)
 	if (WARN_ON(!pfdev->vdev)) {
 		rc = -ENOMEM;
 		pr_info("failed to allocate video_device\n");
-		goto vdec_end;
+		return rc;
 	}
-
-	pfdev->asd[0] = mtk_get_pdata(dev, pfdev);
-	pr_debug("asd %p %p %p\n", pfdev->asd[0], pfdev->asd[1],
-		pfdev->asd[2]);
-
 
 #if defined(CONFIG_MEDIA_CONTROLLER)
 	pfdev->v4l2_dev.mdev = kzalloc(sizeof(struct media_device),
 		GFP_KERNEL);
 	if (!pfdev->v4l2_dev.mdev) {
 		rc = -ENOMEM;
-		pr_info("failed to allocate  media_device\n");
-		goto mdev_end;
+		pr_info("failed to allocate media_device\n");
+		goto vdev_release;
 	}
-	strlcpy(pfdev->v4l2_dev.mdev->model, "mtk_V4L2_misc_core",
+	strscpy(pfdev->v4l2_dev.mdev->model, "mtk_V4L2_misc_core",
 			sizeof(pfdev->v4l2_dev.mdev->model));
 	pfdev->v4l2_dev.mdev->dev = &(dev->dev);
 
@@ -217,17 +209,16 @@ static int mtk_composite_probe(struct platform_device *dev)
 
 	rc = media_device_register(pfdev->v4l2_dev.mdev);
 	if (WARN_ON(rc < 0)) {
-		pr_info("failed to register media_device");
-		goto mdev_end;
+		pr_info("failed to register media_device\n");
+		goto mdev_cleanup;
 	}
 
 	/* Initialize mutex */
 	mutex_init(&pfdev->v4l2_dev.mdev->graph_mutex);
 	rc = media_entity_pads_init(&pfdev->vdev->entity, 0, NULL);
-
 	if (WARN_ON(rc < 0)) {
 		pr_info("media_entity_pads init failed\n");
-		goto mdev_end;
+		goto mdev_unregister;
 	}
 	pfdev->vdev->entity.function = MEDIA_ENT_F_IO_V4L;
 #endif
@@ -235,38 +226,48 @@ static int mtk_composite_probe(struct platform_device *dev)
 	rc = v4l2_device_register(&dev->dev, &pfdev->v4l2_dev);
 	if (rc) {
 		pr_info("Unable to register v4l2 device.\n");
-		goto mdev_end;
+		goto mdev_unregister;
 	}
 	platform_set_drvdata(dev, pfdev);
 
-	pr_debug("platform_set_drvdata num_subdevs %d\n",
-		pfdev->notifier.num_subdevs);
+	v4l2_async_nf_init(&pfdev->notifier, &pfdev->v4l2_dev);
+
+	rc = mtk_composite_parse_dt(dev, pfdev);
+	if (rc) {
+		pr_info("Failed to parse composite endpoints\n");
+		goto notifier_cleanup;
+	}
 
 	pfdev->sd = devm_kzalloc(&dev->dev, sizeof(struct v4l2_subdev *) *
-		ARRAY_SIZE(pfdev->asd), GFP_KERNEL);
+		ARRAY_SIZE(pfdev->asc), GFP_KERNEL);
 	if (!pfdev->sd) {
 		rc = -ENOMEM;
 		pr_info("Unable to devm_kzalloc.\n");
-		goto mdev_end;
+		goto notifier_cleanup;
 	}
 
-	pfdev->notifier.subdevs = pfdev->asd;
 	pfdev->notifier.ops = &fl_async_notify_ops;
 
-	rc = v4l2_async_notifier_register(&pfdev->v4l2_dev, &pfdev->notifier);
+	rc = v4l2_async_nf_register(&pfdev->notifier);
 	if (rc) {
 		pr_info("Error registering async notifier\n");
-		rc = -EINVAL;
-		goto mdev_end;
+		goto notifier_cleanup;
 	}
 
 	return 0;
 
-mdev_end:
-	kzfree(pfdev->vdev);
-vdec_end:
-	kfree(pfdev);
-
+notifier_cleanup:
+	v4l2_async_nf_cleanup(&pfdev->notifier);
+	v4l2_device_unregister(&pfdev->v4l2_dev);
+mdev_unregister:
+#if defined(CONFIG_MEDIA_CONTROLLER)
+	media_device_unregister(pfdev->v4l2_dev.mdev);
+mdev_cleanup:
+	media_device_cleanup(pfdev->v4l2_dev.mdev);
+	kfree(pfdev->v4l2_dev.mdev);
+vdev_release:
+#endif
+	video_device_release(pfdev->vdev);
 	return rc;
 }
 
@@ -274,8 +275,10 @@ static int mtk_composite_remove(struct platform_device *dev)
 {
 	struct mtk_composite_v4l2_device *isp = platform_get_drvdata(dev);
 
-	v4l2_async_notifier_unregister(&isp->notifier);
+	v4l2_async_nf_unregister(&isp->notifier);
+	v4l2_async_nf_cleanup(&isp->notifier);
 	mtk_composite_unregister_entities(isp);
+	video_device_release(isp->vdev);
 
 	return 0;
 }

@@ -4,6 +4,8 @@
  */
 
 
+#include <linux/init.h>
+#include <linux/module.h>
 #include <linux/clk-provider.h>
 #include <linux/io.h>
 
@@ -1138,3 +1140,6 @@ void print_subsys_reg(char *subsys_name)
 			rns->name, PHYSADDR(rns), clk_readl(ADDR(rns)));
 	}
 }
+
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("MediaTek MT6781 Clock Debug Driver");

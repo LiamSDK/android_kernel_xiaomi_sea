@@ -519,7 +519,6 @@ static int __init clkchk_init(void)
 
 	return 0;
 }
-subsys_initcall(clkchk_init);
 
 
 /*
@@ -753,13 +752,21 @@ static void __init pg_check_swcg_init_common(struct pg_check_swcg *swcg)
  */
 static int __init pg_check_swcg_init_mt6781(void)
 {
-	/* fill the 'struct clk *' ptr of every CGs*/
 	int i;
+	int ret;
 
+	ret = clkchk_init();
+	if (ret)
+		return ret;
+
+	/* fill the 'struct clk *' ptr of every CGs*/
 	for (i = 0; i < ARRAY_SIZE(mtk_subsys_check); i++)
 		pg_check_swcg_init_common(mtk_subsys_check[i].swcgs);
 
 	return 0;
 }
 subsys_initcall(pg_check_swcg_init_mt6781);
+
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("MediaTek MT6781 Clock Check Driver");
 

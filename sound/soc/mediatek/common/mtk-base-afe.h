@@ -49,6 +49,7 @@ struct mtk_base_memif_data {
 	int mono_invert;
 	int quad_ch_reg;
 	int quad_ch_mask;
+	int quad_ch_mask_shift;
 	int quad_ch_shift;
 	int int_odd_flag_reg;
 	int int_odd_flag_shift;
@@ -90,6 +91,10 @@ struct mtk_base_irq_data {
 	int irq_en_shift;
 	int irq_clr_reg;
 	int irq_clr_shift;
+	int irq_ap_en_reg;
+	int irq_ap_en_shift;
+	int irq_scp_en_reg;
+	int irq_scp_en_shift;
 	int irq_status_shift;
 };
 

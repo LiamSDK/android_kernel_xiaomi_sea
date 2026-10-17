@@ -4,7 +4,7 @@
 
 flashlight-y := flashlight-core.o
 flashlight-y += flashlight-device.o
-flashlight-$(CONFIG_MTK_FLASHLIGHT_OCP8132) += flashlights-ocp8132.o
+
 
 obj-$(CONFIG_MTK_FLASHLIGHT)             += flashlight.o
 obj-$(CONFIG_MTK_V4L2_FLASHLIGHT)        += mtk-composite.o
@@ -37,10 +37,14 @@ ccflags-y += -D$(MTK_PLATFORM) -D$(MTK_PROJECT)
 ifeq ($(CONFIG_MTK_FLASHLIGHT_AW3644),y)
 ccflags-y += -DCONFIG_MTK_FLASHLIGHT_AW3644
 endif
-subdir-ccflags-y += \
+ccflags-y += \
 	-I$(MTK_CUSTOM_PATH)/include/mt-plat \
+	-I$(MTK_CUSTOM_PATH)/include/mt-plat/mt6781/include \
+	-I$(MTK_CUSTOM_PATH)/include/mt-plat/mt6785/include \
 	-I$(MTK_CUSTOM_PATH)/include/mt-plat/$(MTK_PLATFORM)/include/mach \
 	-I$(MTK_CUSTOM_PATH)/pmic/include \
 	-I$(MTK_CUSTOM_PATH)/pmic \
 	-I$(MTK_CUSTOM_PATH)/power_throttling
+
+subdir-ccflags-y += $(ccflags-y)
 
