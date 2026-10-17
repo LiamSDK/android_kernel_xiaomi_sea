@@ -1113,7 +1113,7 @@ CONFIG_TOUCHSCREEN_XIAOMI_TOUCH=m
 # =============================================================================
 CONFIG_MTK_ADSP_LEGACY=m # adsp-legacy.ko [vendor_dlkm] (drivers/misc/mediatek/adsp/mt6781/adsp_platform_driver.c)
 CONFIG_MTK_ADSP=m # adsp.ko [vendor_dlkm] (drivers/misc/mediatek/adsp/common_v2/adsp_fs.c)
-CONFIG_MTK_AUDIO_IPI=y # audio_ipi core (drivers/misc/mediatek/audio_ipi/common_v1/framework/audio_ipi_dma.c)
+# CONFIG_MTK_AUDIO_IPI is not set
 CONFIG_MTK_CMDQ_MBOX_EXT=m # cmdq-platform-mt6781.ko [vendor_ramdisk] (drivers/misc/mediatek/cmdq/mailbox/mt6781/cmdq-platform.c)
 CONFIG_MTK_CMDQ_SEC_DRV=m # cmdq-sec-drv.ko [vendor_dlkm] (drivers/misc/mediatek/cmdq/mailbox/cmdq-sec-mailbox.c)
 CONFIG_MTK_CMDQ_TEST=m # cmdq-test.ko [vendor_dlkm] (drivers/misc/mediatek/cmdq/mailbox/cmdq-test.c)
@@ -1172,7 +1172,7 @@ CONFIG_MTK_CAMERA_QOS=m # cam_qos.ko [vendor_dlkm] (drivers/misc/mediatek/camera
 CONFIG_MTK_CAMERA_DIP_ISP6S=m # camera_dip_isp6s.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/dip/isp_6s/camera_dip.c)
 CONFIG_MTK_CAMERA_EEPROM_ISP6S_LAG=m # camera_eeprom_isp6s_lag.ko [vendor_dlkm] (drivers/misc/mediatek/cam_cal/src/common/v2/eeprom_driver.c)
 CONFIG_MTK_CAMERA_FDVT_ISP51_V1=m # camera_fdvt_isp51_v1.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/fdvt/5.1/camera_fdvt.c)
-CONFIG_MTK_CAMERA_ISP=y # camera_isp core driver (drivers/misc/mediatek/cameraisp/)
+# CONFIG_MTK_CAMERA_ISP is not set
 CONFIG_MTK_CAMERA_MEM=m # camera_mem.ko [vendor_dlkm] (lib/usercopy.c)
 CONFIG_MTK_CAMERA_MFB_ISP6S=m # camera_mfb_isp6s.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/mfb/isp_6s/camera_mfb.c)
 CONFIG_MTK_CAMERA_RSC_ISP6S_V1=m # camera_rsc_isp6s_v1.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/rsc/engine_request.c)
