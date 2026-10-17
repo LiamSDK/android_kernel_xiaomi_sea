@@ -459,7 +459,7 @@ CONFIG_PTP_1588_CLOCK=m
 CONFIG_GPIO_GENERIC_PLATFORM=y
 CONFIG_POWER_RESET_HISI=y
 CONFIG_POWER_RESET_SYSCON=y
-# CONFIG_HWMON is not set
+CONFIG_HWMON=m
 CONFIG_THERMAL=y
 CONFIG_THERMAL_NETLINK=y
 CONFIG_THERMAL_STATISTICS=y
@@ -845,7 +845,7 @@ CONFIG_MTK_MTK_LPM_PLAT_V1_LEGACY=m # mtk-lpm-plat-v1-legacy.ko [vendor_dlkm] (d
 CONFIG_MTK_MBOX=m # mtk-mbox.ko [vendor_dlkm] (drivers/soc/mediatek/Makefile)
 CONFIG_MTK_PM_DOMAIN_DISABLE_UNUSED=m # mtk-pm-domain-disable-unused.ko [vendor_dlkm] (drivers/soc/mediatek/mtk-pm-domain-disable-unused.c)
 CONFIG_MTK_SCPSYS_MT6781=m # mtk-scpsys-mt6781.ko [vendor_ramdisk] (drivers/soc/mediatek/mtk-scpsys-mt6781.c (from drivers/clk/mediatek/clk-mt6781-pg.c))
-CONFIG_MTK_SCPSYS=m # mtk-scpsys.ko [vendor_ramdisk] (drivers/pmdomain/mediatek/Makefile)
+CONFIG_MTK_SCPSYS=y # mtk-scpsys core driver (drivers/pmdomain/mediatek/Makefile)
 CONFIG_MTK_SOCINFO=m # mtk-socinfo.ko [vendor_ramdisk] (drivers/soc/mediatek/Makefile)
 CONFIG_MACH_MT3967=m # mtk_dcm.ko [vendor_ramdisk] (drivers/misc/mediatek/base/power/dcm_v1/Makefile)
 CONFIG_MTK_DISP_SEC=m # mtk_disp_sec.ko [vendor_dlkm] (drivers/gpu/drm/mediatek/mediatek_v2/mtk_disp_sec.c)
@@ -862,7 +862,7 @@ CONFIG_HW_RANDOM_MTK_SEC=m # sec-rng.ko [vendor_ramdisk] (drivers/char/hw_random
 CONFIG_MTK_SEC=m # sec.ko [vendor_dlkm+vendor_ramdisk] (drivers/misc/mediatek/masp/asfv2/core/sec_osal.c)
 CONFIG_MTK_TINYSYS_SSPM_SUPPORT=m # sspm.ko [vendor_dlkm] (drivers/misc/mediatek/sspm/Makefile)
 CONFIG_SYSCON_REBOOT_MODE=m # syscon-reboot-mode.ko [vendor_dlkm+vendor_ramdisk] (drivers/power/reset/Makefile)
-CONFIG_MTK_TIMER=m # timer-mediatek.ko [vendor_ramdisk] (drivers/clocksource/Makefile)
+CONFIG_MTK_TIMER=y # timer-mediatek (drivers/clocksource/Makefile)
 
 # =============================================================================
 # 2. Energia, PMIC (MT6358/MT6366/MT6370), Charger/PD/PumpExpress, Bateria (Fuel Gauge/Auth) & Thermal/DVFS
@@ -1001,14 +1001,13 @@ CONFIG_MMSTAT_TRACER=m # trace_mmstat.ko [vendor_dlkm] (kernel/trace/Makefile)
 CONFIG_MTK_TRUSTED_MEMORY_SUBSYSTEM=m # trusted_mem.ko [vendor_dlkm] (drivers/misc/mediatek/trusted_mem/Makefile)
 CONFIG_MTK_TUI_COMMON=m # tui-common.ko [vendor_dlkm] (drivers/misc/mediatek/trusted_mem/tui_common/ (TUI interface))
 CONFIG_MTK_WIDEVINE_DRM=m # widevine_driver.ko [vendor_dlkm] (drivers/misc/mediatek/widevine_driver/ (DRM secure buffer))
-CONFIG_ZRAM=m # zram.ko [vendor_ramdisk] (drivers/block/zram/Makefile)
 CONFIG_ZSMALLOC=m # zsmalloc.ko [vendor_ramdisk] (mm/Makefile)
 
 # =============================================================================
 # 4. Armazenamento (UFS / eMMC / RPMB / Blocktag) & USB / MUSB / PHY
 # =============================================================================
 CONFIG_MTK_BLOCK_TAG=m # blocktag.ko [vendor_ramdisk] (drivers/misc/mediatek/blocktag/Makefile)
-CONFIG_MTK_ECCCI_C2K=m # c2k_usb.ko [vendor_dlkm] (drivers/misc/mediatek/c2k_usb/Makefile)
+CONFIG_MTK_ECCCI_C2K=y # c2k support (drivers/misc/mediatek/c2k_usb/Makefile)
 CONFIG_MTK_C2K_USB_F_VIA_ATC=m # c2k_usb_f_via_atc.ko [vendor_dlkm] (drivers/misc/mediatek/c2k_usb/f_rawbulk.c)
 CONFIG_MTK_C2K_USB_F_VIA_ETS=m # c2k_usb_f_via_ets.ko [vendor_dlkm] (drivers/misc/mediatek/c2k_usb/f_rawbulk.c)
 CONFIG_MTK_C2K_USB_F_VIA_MODEM=m # c2k_usb_f_via_modem.ko [vendor_dlkm] (drivers/misc/mediatek/c2k_usb/f_rawbulk.c)
@@ -1065,34 +1064,33 @@ CONFIG_PWM_MTK_DISP=m # pwm-mtk-disp.ko [vendor_ramdisk] (drivers/pwm/Makefile)
 # 6. Input (Touchscreen FT3418/NT36672C, Xiaomi Touch, KeyPad, Fingerprint Goodix/FPC, Haptics AW8622) & Sensorhub (SCP/HF)
 # =============================================================================
 CONFIG_MTK_ACCEL_COMMON=m # accel_common.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/accelerometer/accel.c)
-CONFIG_MTK_ACCELHUB=m # accelhub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/accelerometer/accelhub/accelhub.c)
+CONFIG_MTK_ACCELHUB=y # accelhub core (drivers/misc/mediatek/sensors-1.0/accelerometer/accelhub/accelhub.c)
 CONFIG_MTK_ALSPS_COMMON=m # alsps_common.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/alsps/alsps.c)
-CONFIG_MTK_ALSPSHUB=m # alspshub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/alsps/alspshub/alspshub.c)
+CONFIG_MTK_ALSPSHUB=y # alspshub core (drivers/misc/mediatek/sensors-1.0/alsps/alspshub/alspshub.c)
 CONFIG_AW8622_HAPTIC=m # aw8622_haptic.ko [vendor_dlkm] (drivers/misc/aw8622_haptic/Makefile)
 CONFIG_MTK_BARO_COMMON=m # baro_common.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/barometer/barometer.c)
-CONFIG_MTK_BAROHUB=m # barohub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/barometer/barohub/barohub.c)
+CONFIG_MTK_BAROHUB=y # barohub core (drivers/misc/mediatek/sensors-1.0/barometer/barohub/barohub.c)
 CONFIG_MTK_CCCI_FSM_SCP=m # ccci_fsm_scp.ko [vendor_dlkm] (drivers/misc/mediatek/eccci/fsm/ccci_fsm_scp.c)
 CONFIG_MTK_FT3418_I2C=m # ft3418_i2c.ko [vendor_dlkm+vendor_ramdisk] (drivers/input/touchscreen/mediatek/ft3418_i2c/focaltech_test/focaltech_test.c)
 CONFIG_TOUCHSCREEN_FT3418_I2C=m
 CONFIG_MTK_FUSION=m # fusion.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/fusion.c)
-CONFIG_MTK_GAMEROTVECHUB=m # gamerotvechub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/gamerotvechub/gamerotvechub.c)
+CONFIG_MTK_GAMEROTVECHUB=y # gamerotvechub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/gamerotvechub/gamerotvechub.c)
 CONFIG_MTK_GF_FINGERPRINT=m # gf_fingerprint.ko [vendor_dlkm] (drivers/input/fingerprint/goodix/gf_spi_tee.c)
-CONFIG_MTK_GMAGROTVECHUB=m # gmagrotvechub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/gmagrotvechub/gmagrotvechub.c)
-CONFIG_MTK_GRAVITYHUB=m # gravityhub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/gravityhub/gravityhub.c)
+CONFIG_MTK_GMAGROTVECHUB=y # gmagrotvechub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/gmagrotvechub/gmagrotvechub.c)
+CONFIG_MTK_GRAVITYHUB=y # gravityhub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/gravityhub/gravityhub.c)
 CONFIG_MTK_GYRO_COMMON=m # gyro_common.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/gyroscope/gyroscope.c)
-CONFIG_MTK_GYROHUB=m # gyrohub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/gyroscope/gyrohub/gyrohub.c)
-CONFIG_HWMON=m # hwmon.ko [vendor_dlkm] (drivers/hwmon/Makefile)
+CONFIG_MTK_GYROHUB=y # gyrohub core (drivers/misc/mediatek/sensors-1.0/gyroscope/gyrohub/gyrohub.c)
 CONFIG_MTK_IMGSENSOR_ISP6S_LAG=m # imgsensor_isp6s_lag.ko [vendor_dlkm] (drivers/misc/mediatek/imgsensor/src/common/v1_1/n3d_fsync/n3d.c)
 CONFIG_MTK_LCT_TP=m # lct_tp.ko [vendor_dlkm+vendor_ramdisk] (drivers/input/touchscreen/mediatek/ft3418_i2c/focaltech_ex_fun.c)
-CONFIG_MTK_LINEARACCHUB=m # linearacchub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/linearacchub/linearacchub.c)
+CONFIG_MTK_LINEARACCHUB=y # linearacchub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/linearacchub/linearacchub.c)
 CONFIG_MTK_MAG_COMMON=m # mag_common.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/magnetometer/mag.c)
-CONFIG_MTK_MAGHUB=m # maghub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/magnetometer/maghub/maghub.c)
+CONFIG_MTK_MAGHUB=y # maghub core (drivers/misc/mediatek/sensors-1.0/magnetometer/maghub/maghub.c)
 CONFIG_KEYBOARD_MTK=m # mtk-kpd.ko [vendor_ramdisk] (drivers/input/keyboard/Makefile)
 CONFIG_MTK_MTK_SCP_ULTRA=m # mtk-scp-ultra.ko [vendor_dlkm] (sound/soc/mediatek/scp_ultra/mtk-scp-ultra-common.c)
 CONFIG_MTK_MTK_IOCTL_TOUCH_BOOST=m # mtk_ioctl_touch_boost.ko [vendor_dlkm] ()
-CONFIG_MTK_ORIENTHUB=m # orienthub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/orienthub/orienthub.c)
+CONFIG_MTK_ORIENTHUB=y # orienthub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/orienthub/orienthub.c)
 CONFIG_DRM_PANEL_TIANMA_NT36672E_VDO_120HZ_VFP=m # panel-tianma-nt36672e-vdo-120hz-vfp.ko [vendor_ramdisk] (drivers/gpu/drm/panel/Makefile)
-CONFIG_MTK_ROTATVECHUB=m # rotatvechub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/rotatvechub/rotatvechub.c)
+CONFIG_MTK_ROTATVECHUB=y # rotatvechub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/rotatvechub/rotatvechub.c)
 CONFIG_MTK_TINYSYS_SCP_SUPPORT=m # scp.ko [vendor_dlkm] (drivers/misc/mediatek/scp/cm4/Makefile)
 CONFIG_MTK_SENSORHUB=m # sensorHub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorHub/SCP_nanoHub/SCP_nanoHub.c)
 CONFIG_MTK_SENSOR_LIST=m # sensor_list.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/hwmon/sensor_list/sensor_list.c)
@@ -1102,11 +1100,11 @@ CONFIG_MTK_SITUATION=m # situation.ko [vendor_dlkm] (drivers/misc/mediatek/senso
 CONFIG_MTK_SITUATIONHUB=m # situationhub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/situation/sar/sarhub.c)
 CONFIG_MTK_ULTRASND_PROXIMITY=m # snd-soc-mtk-scp-ultra.ko [vendor_dlkm] (sound/soc/mediatek/scp_ultra/Makefile)
 CONFIG_MTK_STEP_COUNTER=m # step_counter.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/step_counter/step_counter.c)
-CONFIG_MTK_STEPSIGNHUB=m # stepsignhub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/step_counter/stepsignhub/stepsignhub.c)
+CONFIG_MTK_STEPSIGNHUB=y # stepsignhub core (drivers/misc/mediatek/sensors-1.0/step_counter/stepsignhub/stepsignhub.c)
 CONFIG_MTK_TOUCH_BOOST=m # touch_boost.ko [vendor_dlkm] (drivers/misc/mediatek/performance/tchbst/user/utch.c)
-CONFIG_MTK_UNCALI_ACCHUB=m # uncali_acchub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/uncali_acchub/uncali_acchub.c)
-CONFIG_MTK_UNCALI_GYROHUB=m # uncali_gyrohub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/uncali_gyrohub/uncali_gyrohub.c)
-CONFIG_MTK_UNCALI_MAGHUB=m # uncali_maghub.ko [vendor_dlkm] (drivers/misc/mediatek/sensors-1.0/sensorfusion/uncali_maghub/uncali_maghub.c)
+CONFIG_MTK_UNCALI_ACCHUB=y # uncali_acchub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/uncali_acchub/uncali_acchub.c)
+CONFIG_MTK_UNCALI_GYROHUB=y # uncali_gyrohub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/uncali_gyrohub/uncali_gyrohub.c)
+CONFIG_MTK_UNCALI_MAGHUB=y # uncali_maghub core (drivers/misc/mediatek/sensors-1.0/sensorfusion/uncali_maghub/uncali_maghub.c)
 CONFIG_TOUCHSCREEN_XIAOMI_TOUCHFEATURE=m # xiaomi_touch.ko [vendor_dlkm+vendor_ramdisk] (drivers/input/touchscreen/xiaomi/xiaomi_touch.c)
 CONFIG_TOUCHSCREEN_XIAOMI_TOUCH=m
 
@@ -1115,7 +1113,7 @@ CONFIG_TOUCHSCREEN_XIAOMI_TOUCH=m
 # =============================================================================
 CONFIG_MTK_ADSP_LEGACY=m # adsp-legacy.ko [vendor_dlkm] (drivers/misc/mediatek/adsp/mt6781/adsp_platform_driver.c)
 CONFIG_MTK_ADSP=m # adsp.ko [vendor_dlkm] (drivers/misc/mediatek/adsp/common_v2/adsp_fs.c)
-CONFIG_MTK_AUDIO_IPI=m # audio_ipi.ko [vendor_dlkm] (drivers/misc/mediatek/audio_ipi/common_v1/framework/audio_ipi_dma.c)
+CONFIG_MTK_AUDIO_IPI=y # audio_ipi core (drivers/misc/mediatek/audio_ipi/common_v1/framework/audio_ipi_dma.c)
 CONFIG_MTK_CMDQ_MBOX_EXT=m # cmdq-platform-mt6781.ko [vendor_ramdisk] (drivers/misc/mediatek/cmdq/mailbox/mt6781/cmdq-platform.c)
 CONFIG_MTK_CMDQ_SEC_DRV=m # cmdq-sec-drv.ko [vendor_dlkm] (drivers/misc/mediatek/cmdq/mailbox/cmdq-sec-mailbox.c)
 CONFIG_MTK_CMDQ_TEST=m # cmdq-test.ko [vendor_dlkm] (drivers/misc/mediatek/cmdq/mailbox/cmdq-test.c)
@@ -1174,7 +1172,7 @@ CONFIG_MTK_CAMERA_QOS=m # cam_qos.ko [vendor_dlkm] (drivers/misc/mediatek/camera
 CONFIG_MTK_CAMERA_DIP_ISP6S=m # camera_dip_isp6s.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/dip/isp_6s/camera_dip.c)
 CONFIG_MTK_CAMERA_EEPROM_ISP6S_LAG=m # camera_eeprom_isp6s_lag.ko [vendor_dlkm] (drivers/misc/mediatek/cam_cal/src/common/v2/eeprom_driver.c)
 CONFIG_MTK_CAMERA_FDVT_ISP51_V1=m # camera_fdvt_isp51_v1.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/fdvt/5.1/camera_fdvt.c)
-CONFIG_MTK_CAMERA_ISP=m # camera_isp.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/src/mt6853/camera_isp.c)
+CONFIG_MTK_CAMERA_ISP=y # camera_isp core driver (drivers/misc/mediatek/cameraisp/)
 CONFIG_MTK_CAMERA_MEM=m # camera_mem.ko [vendor_dlkm] (lib/usercopy.c)
 CONFIG_MTK_CAMERA_MFB_ISP6S=m # camera_mfb_isp6s.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/mfb/isp_6s/camera_mfb.c)
 CONFIG_MTK_CAMERA_RSC_ISP6S_V1=m # camera_rsc_isp6s_v1.ko [vendor_dlkm] (drivers/misc/mediatek/cameraisp/rsc/engine_request.c)
@@ -1183,9 +1181,9 @@ CONFIG_MTK_FLASHLIGHT_OCP8132=m # flashlights-ocp8132.ko [vendor_dlkm] (drivers/
 CONFIG_MTK_FLASHLIGHT_PT=y
 CONFIG_MTK_FLASHLIGHT_PT_STRICT=y
 CONFIG_MTK_FLASHLIGHT_DLPT=y
-CONFIG_MTK_IMGSENSOR=m # imgsensor_isp6s_lag.ko [vendor_dlkm]
+CONFIG_MTK_IMGSENSOR=y # imgsensor core driver
 CONFIG_CUSTOM_KERNEL_IMGSENSOR="s5khm2sp_main_sunny_mipi_raw s5khm2sd_main_ofilm_mipi_raw s5khm2sd_main_semco_mipi_raw ov64b40_main_sunny_mipi_raw ov64b40_main_aac_mipi_raw ov64b40_main_ofilm_mipi_raw imx471_front_sunny_mipi_raw imx471_front_ofilm_mipi_raw imx355_ultra_ofilm_mipi_raw s5k4h7_ultra_sunny_mipi_raw gc02m1_macro_ofilm_mipi_raw gc02m1_macro_aac_mipi_raw"
-CONFIG_MTK_CAM_CAL=m # camera_eeprom_isp6s_lag.ko [vendor_dlkm]
+CONFIG_MTK_CAM_CAL=y # cam_cal core driver
 CONFIG_CUSTOM_KERNEL_CAM_CAL_DRV="BRCB032GWZ_3 GT24c32a cat24c16"
 CONFIG_MTK_LENS=m # main2af.ko [vendor_dlkm] (drivers/misc/mediatek/lens/mtk/main2/Makefile)
 # Sub-module of CONFIG_MTK_LENS: main3af.ko [vendor_dlkm] (drivers/misc/mediatek/lens/mtk/main3/Makefile)
