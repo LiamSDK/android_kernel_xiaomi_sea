@@ -1,6 +1,15 @@
 # SPDX-License-Identifier: GPL-2.0
 subdir-ccflags-$(CONFIG_POWER_SUPPLY_DEBUG) := -DDEBUG
 
+MTK_PLATFORM := $(subst ",,$(CONFIG_MTK_PLATFORM))
+ifneq ($(MTK_PLATFORM),)
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/$(MTK_PLATFORM)/include
+subdir-ccflags-y += -I$(srctree)/include/mt-plat/$(MTK_PLATFORM)/include
+subdir-ccflags-y += -I$(srctree)/include/mt-plat
+subdir-ccflags-y += -I$(srctree)/drivers/power/supply
+endif
+
 power_supply-y				:= power_supply_core.o
 power_supply-$(CONFIG_SYSFS)		+= power_supply_sysfs.o
 power_supply-$(CONFIG_LEDS_TRIGGERS)	+= power_supply_leds.o
@@ -115,3 +124,5 @@ obj-$(CONFIG_CHARGER_CLASS)	+= charger_class.o
 obj-$(CONFIG_CHARGER_BQ2589X)	+= bq2589x_charger.o
 obj-$(CONFIG_MTK_BQ2597X_CHARGER) += bq2597x_charger.o
 obj-$(CONFIG_MTK_MT6358_BATTERY) += mt6358_battery.o
+mt6358_battery-y := mtk_battery_coulomb_service.o mtk_battery.o mtk_battery_algo.o mtk_battery_daemon.o mt6358-gauge.o
+

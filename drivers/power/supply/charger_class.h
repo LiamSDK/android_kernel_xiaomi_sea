@@ -316,5 +316,14 @@ extern int unregister_charger_device_notifier(
 extern int charger_dev_notify(
 	struct charger_device *charger_dev, int event);
 
+typedef struct touchscreen_usb_plugin_data {
+	bool valid;
+	bool usb_plugged_in;
+	void (*event_callback)(void);
+} touchscreen_usb_plugin_data_t;
+
+extern touchscreen_usb_plugin_data_t g_touchscreen_usb_pulgin;
+extern struct charger_device *chg_dev_retry;
 
 #endif /*LINUX_POWER_CHARGER_CLASS_H*/
+

@@ -3,9 +3,9 @@
  * Copyright (C) 2016 MediaTek Inc.
  */
 
-#ifndef _MT_PMIC_UPMU_SW_H_
-#define _MT_PMIC_UPMU_SW_H_
+#ifndef _MT_PMIC_UPMU_SW_MT6781_H_
+#define _MT_PMIC_UPMU_SW_MT6781_H_
 
 #include "../../../mt6785/include/mach/upmu_sw.h"
 
-#endif /* _MT_PMIC_UPMU_SW_H_ */
+#endif /* _MT_PMIC_UPMU_SW_MT6781_H_ */

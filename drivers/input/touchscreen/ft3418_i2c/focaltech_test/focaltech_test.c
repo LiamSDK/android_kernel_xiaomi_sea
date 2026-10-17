@@ -1163,25 +1163,19 @@ static int fts_test_save_test_data(char *file_name, char *data_buf, int len)
     struct file *pfile = NULL;
     char filepath[FILE_NAME_LENGTH] = { 0 };
     loff_t pos;
-    mm_segment_t old_fs;
 
     FTS_TEST_FUNC_ENTER();
     memset(filepath, 0, sizeof(filepath));
     snprintf(filepath, FILE_NAME_LENGTH, "%s%s", FTS_TEST_FILE_PATH, file_name);
-    if (NULL == pfile) {
-        pfile = filp_open(filepath, O_TRUNC | O_CREAT | O_RDWR, 0);
-    }
+    pfile = filp_open(filepath, O_TRUNC | O_CREAT | O_RDWR, 0);
     if (IS_ERR(pfile)) {
         FTS_TEST_ERROR("error occured while opening file %s.",  filepath);
         return -EIO;
     }
 
-    old_fs = get_fs();
-    set_fs(KERNEL_DS);
     pos = 0;
-    vfs_write(pfile, data_buf, len, &pos);
+    kernel_write(pfile, data_buf, len, &pos);
     filp_close(pfile, NULL);
-    set_fs(old_fs);
 
     FTS_TEST_FUNC_EXIT();
     return 0;
@@ -2366,14 +2360,12 @@ err_disable_clb_fail:
 	FTS_TEST_FUNC_EXIT();
 	return single_open(file, tp_data_dump_proc_show, NULL);
 }
-static const struct file_operations tp_data_dump_proc_fops =
+static const struct proc_ops tp_data_dump_proc_fops =
 {
-	.owner = THIS_MODULE,
-	.open = tp_data_dump_proc_open,
-	.read = seq_read,
-	.llseek = seq_lseek,
-	.release = single_release,
-
+	.proc_open = tp_data_dump_proc_open,
+	.proc_read = seq_read,
+	.proc_lseek = seq_lseek,
+	.proc_release = single_release,
 };
 static int fts_tp_data_dump_proc_init(void)
 {

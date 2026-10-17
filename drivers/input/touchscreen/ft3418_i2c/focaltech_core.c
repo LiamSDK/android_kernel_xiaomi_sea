@@ -42,11 +42,7 @@
 #include <linux/fb.h>
 #include <linux/fb_notifier.h>
 #elif defined(CONFIG_DRM)
-#if defined(CONFIG_DRM_PANEL)
-#include <drm/drm_panel.h>
-#else
-#include <linux/msm_drm_notify.h>
-#endif
+#include <linux/soc/mediatek/mtk_disp_notify.h>
 #elif defined(CONFIG_HAS_EARLYSUSPEND)
 #include <linux/earlysuspend.h>
 #define FTS_SUSPEND_LEVEL 1     /* Early-suspend level */
@@ -1348,17 +1344,14 @@ static int fts_parse_dt(struct device *dev, struct fts_ts_platform_data *pdata)
     }
 
     /* reset, irq gpio info */
-    pdata->reset_gpio = of_get_named_gpio_flags(np, "focaltech,reset-gpio",
-                        0, &pdata->reset_gpio_flags);
+    pdata->reset_gpio = of_get_named_gpio(np, "focaltech,reset-gpio", 0);
     if (pdata->reset_gpio < 0)
         FTS_ERROR("Unable to get reset_gpio");
 
-    pdata->irq_gpio = of_get_named_gpio_flags(np, "focaltech,irq-gpio",
-                      0, &pdata->irq_gpio_flags);
+    pdata->irq_gpio = of_get_named_gpio(np, "focaltech,irq-gpio", 0);
     if (pdata->irq_gpio < 0)
         FTS_ERROR("Unable to get irq_gpio");
-	pdata->avdd_gpio = of_get_named_gpio_flags(np,"focaltech,avdd-gpio",
-			           0, &pdata->avdd_gpio_flags);
+	pdata->avdd_gpio = of_get_named_gpio(np, "focaltech,avdd-gpio", 0);
 	if (pdata->avdd_gpio < 0)
 		FTS_ERROR("Unable to get avdd_gpio");
 
@@ -1437,127 +1430,28 @@ static int fb_notifier_callback(struct notifier_block *self,
     return 0;
 }
 #elif defined(CONFIG_DRM)
-#if defined(CONFIG_DRM_PANEL)
-static struct drm_panel *active_panel;
-
-static int drm_check_dt(struct device_node *np)
-{
-    int i = 0;
-    int count = 0;
-    struct device_node *node = NULL;
-    struct drm_panel *panel = NULL;
-
-    count = of_count_phandle_with_args(np, "panel", NULL);
-    if (count <= 0) {
-        FTS_ERROR("find drm_panel count(%d) fail", count);
-        return -ENODEV;
-    }
-
-    for (i = 0; i < count; i++) {
-        node = of_parse_phandle(np, "panel", i);
-        panel = of_drm_find_panel(node);
-        of_node_put(node);
-        if (!IS_ERR(panel)) {
-            FTS_INFO("find drm_panel successfully");
-            active_panel = panel;
-            return 0;
-        }
-    }
-
-    FTS_ERROR("no find drm_panel");
-    return -ENODEV;
-}
-
 static int drm_notifier_callback(struct notifier_block *self,
                                  unsigned long event, void *data)
 {
-    struct msm_drm_notifier *evdata = data;
-    int *blank = NULL;
     struct fts_ts_data *ts_data = container_of(self, struct fts_ts_data,
                                   fb_notif);
 
-    if (!evdata) {
-        FTS_ERROR("evdata is null");
-        return 0;
-    }
-
-    if (!((event == DRM_PANEL_EARLY_EVENT_BLANK )
-          || (event == DRM_PANEL_EVENT_BLANK))) {
-        FTS_INFO("event(%lu) do not need process\n", event);
-        return 0;
-    }
-
-    blank = evdata->data;
-    FTS_INFO("DRM event:%lu,blank:%d", event, *blank);
-    switch (*blank) {
-    case DRM_PANEL_BLANK_UNBLANK:
-        if (DRM_PANEL_EARLY_EVENT_BLANK == event) {
-            FTS_INFO("resume: event = %lu, not care\n", event);
-        } else if (DRM_PANEL_EVENT_BLANK == event) {
-            queue_work(fts_data->ts_workqueue, &fts_data->resume_work);
-        }
+    switch (event) {
+    case MTK_DISP_EARLY_EVENT_BLANK:
+    case MTK_DISP_EVENT_POWER_OFF:
+        cancel_work_sync(&fts_data->resume_work);
+        fts_ts_suspend(ts_data->dev);
         break;
-    case DRM_PANEL_BLANK_POWERDOWN:
-        if (DRM_PANEL_EARLY_EVENT_BLANK == event) {
-            cancel_work_sync(&fts_data->resume_work);
-            fts_ts_suspend(ts_data->dev);
-        } else if (DRM_PANEL_EVENT_BLANK == event) {
-            FTS_INFO("suspend: event = %lu, not care\n", event);
-        }
+    case MTK_DISP_EVENT_BLANK:
+    case MTK_DISP_EVENT_POWER_ON:
+        queue_work(fts_data->ts_workqueue, &fts_data->resume_work);
         break;
     default:
-        FTS_INFO("DRM BLANK(%d) do not need process\n", *blank);
         break;
     }
 
     return 0;
 }
-#else
-static int drm_notifier_callback(struct notifier_block *self,
-                                 unsigned long event, void *data)
-{
-    struct msm_drm_notifier *evdata = data;
-    int *blank = NULL;
-    struct fts_ts_data *ts_data = container_of(self, struct fts_ts_data,
-                                  fb_notif);
-
-    if (!evdata) {
-        FTS_ERROR("evdata is null");
-        return 0;
-    }
-
-    if (!((event == MSM_DRM_EARLY_EVENT_BLANK )
-          || (event == MSM_DRM_EVENT_BLANK))) {
-        FTS_INFO("event(%lu) do not need process\n", event);
-        return 0;
-    }
-
-    blank = evdata->data;
-    FTS_INFO("DRM event:%lu,blank:%d", event, *blank);
-    switch (*blank) {
-    case MSM_DRM_BLANK_UNBLANK:
-        if (MSM_DRM_EARLY_EVENT_BLANK == event) {
-            FTS_INFO("resume: event = %lu, not care\n", event);
-        } else if (MSM_DRM_EVENT_BLANK == event) {
-            queue_work(fts_data->ts_workqueue, &fts_data->resume_work);
-        }
-        break;
-    case MSM_DRM_BLANK_POWERDOWN:
-        if (MSM_DRM_EARLY_EVENT_BLANK == event) {
-            cancel_work_sync(&fts_data->resume_work);
-            fts_ts_suspend(ts_data->dev);
-        } else if (MSM_DRM_EVENT_BLANK == event) {
-            FTS_INFO("suspend: event = %lu, not care\n", event);
-        }
-        break;
-    default:
-        FTS_INFO("DRM BLANK(%d) do not need process\n", *blank);
-        break;
-    }
-
-    return 0;
-}
-#endif
 #elif defined(CONFIG_HAS_EARLYSUSPEND)
 static void fts_ts_early_suspend(struct early_suspend *handler)
 {
@@ -1742,18 +1636,10 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
     }
 #elif defined(CONFIG_DRM)
     ts_data->fb_notif.notifier_call = drm_notifier_callback;
-#if defind(CONFIG_DRM_PANEL)
-    if (active_panel) {
-        ret = drm_panel_notifier_register(active_panel, &ts_data->fb_notif);
-        if (ret)
-            FTS_ERROR("[DRM]drm_panel_notifier_register fail: %d\n", ret);
-    }
-#else
-    ret = msm_drm_register_client(&ts_data->fb_notif);
+    ret = mtk_disp_notifier_register(&ts_data->fb_notif);
     if (ret) {
-        FTS_ERROR("[DRM]Unable to register fb_notifier: %d\n", ret);
+        FTS_ERROR("[DRM]Unable to register mtk_disp_notifier: %d\n", ret);
     }
-#endif
 #elif defined(CONFIG_HAS_EARLYSUSPEND)
     ts_data->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN + FTS_SUSPEND_LEVEL;
     ts_data->early_suspend.suspend = fts_ts_early_suspend;
@@ -1847,13 +1733,7 @@ static int fts_ts_remove_entry(struct fts_ts_data *ts_data)
     if (fb_drm_unregister_client(&ts_data->fb_notif))
         FTS_ERROR("[FB]Error occurred while unregistering fb_notifier.");
 #elif defined(CONFIG_DRM)
-#if defind(CONFIG_DRM_PANEL)
-    if (active_panel)
-        drm_panel_notifier_unregister(active_panel, &ts_data->fb_notif);
-#else
-    if (msm_drm_unregister_client(&ts_data->fb_notif))
-        FTS_ERROR("[DRM]Error occurred while unregistering fb_notifier.\n");
-#endif
+    mtk_disp_notifier_unregister(&ts_data->fb_notif);
 #elif defined(CONFIG_HAS_EARLYSUSPEND)
     unregister_early_suspend(&ts_data->early_suspend);
 #endif
@@ -2102,9 +1982,9 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
     return 0;
 }
 
-static int fts_ts_remove(struct i2c_client *client)
+static void fts_ts_remove(struct i2c_client *client)
 {
-    return fts_ts_remove_entry(i2c_get_clientdata(client));
+    fts_ts_remove_entry(i2c_get_clientdata(client));
 }
 
 static const struct i2c_device_id fts_ts_id[] = {
@@ -2175,3 +2055,4 @@ module_exit(fts_ts_exit);
 MODULE_AUTHOR("FocalTech Driver Team");
 MODULE_DESCRIPTION("FocalTech Touchscreen Driver");
 MODULE_LICENSE("GPL v2");
+MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);

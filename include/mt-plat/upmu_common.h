@@ -205,7 +205,6 @@ extern unsigned int pmic_config_interface_nospinlock(unsigned int RegNum,
 	unsigned int val,
 	unsigned int MASK,
 	unsigned int SHIFT);
-#ifdef CONFIG_MTK_PMIC_COMMON
 extern unsigned short pmic_set_register_value(PMU_FLAGS_LIST_ENUM flagname,
 					      unsigned int val);
 extern unsigned short pmic_get_register_value(PMU_FLAGS_LIST_ENUM flagname);
@@ -220,7 +219,6 @@ extern unsigned short pmic_set_register_value_nospinlock(
 extern unsigned short bc11_set_register_value(PMU_FLAGS_LIST_ENUM flagname,
 					      unsigned int val);
 extern unsigned short bc11_get_register_value(PMU_FLAGS_LIST_ENUM flagname);
-#endif
 extern void upmu_set_reg_value(unsigned int reg, unsigned int reg_val);
 extern unsigned int upmu_get_reg_value(unsigned int reg);
 extern void pmic_lock(void);

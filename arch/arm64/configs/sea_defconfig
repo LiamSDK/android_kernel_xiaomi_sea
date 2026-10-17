@@ -766,7 +766,7 @@ CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y
 CONFIG_DEBUG_INFO_BTF=y
 CONFIG_MODULE_ALLOW_BTF_MISMATCH=y
 CONFIG_HEADERS_INSTALL=y
-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+CONFIG_SECTION_MISMATCH_WARN_ONLY=y
 CONFIG_MAGIC_SYSRQ=y
 CONFIG_UBSAN=y
 CONFIG_UBSAN_TRAP=y
@@ -907,7 +907,9 @@ CONFIG_MTK_CPU_POWER_THROTTLING=m # mtk_cpu_power_throttling.ko [vendor_dlkm] (d
 CONFIG_MTK_MTK_CPUHP=m # mtk_cpuhp.ko [vendor_dlkm] (drivers/misc/mediatek/base/power/cpuhotplug/mtk_cpuhp_core.c)
 CONFIG_MTK_DYNAMIC_LOADING_POWER_THROTTLING=m # mtk_dynamic_loading_throttling.ko [vendor_dlkm] (drivers/misc/mediatek/power_throttling/Makefile)
 CONFIG_MTK_LOW_BATTERY_POWER_THROTTLING=m # mtk_low_battery_throttling.ko [vendor_dlkm] (drivers/misc/mediatek/power_throttling/Makefile)
+CONFIG_MTK_BATTERY_PERCENTAGE_POWER_THROTTLING=m # mtk_battery_percentage_throttling.ko [vendor_dlkm] (drivers/misc/mediatek/power_throttling/Makefile)
 CONFIG_MACH_MT6833=m # mtk_md_power_throttling.ko [vendor_dlkm] (drivers/misc/mediatek/base/power/power_throttling/Makefile)
+
 CONFIG_MTK_MTK_MDPM_V1=m # mtk_mdpm_v1.ko [vendor_dlkm] (drivers/misc/mediatek/base/power/mdpm_v1/mtk_mdpm_common.c)
 CONFIG_MTK_PBM=m # mtk_pbm.ko [vendor_dlkm] (drivers/misc/mediatek/base/power/pbm_v4/Makefile)
 # Sub-module of CONFIG_MTK_CHARGER: mtk_pd_adapter.ko [vendor_ramdisk] (drivers/power/supply/Makefile)

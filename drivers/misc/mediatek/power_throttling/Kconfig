@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config MTK_POWER_THROTTLING_COMMON
+	bool "MediaTek power throttling common interface"
+	default y
+
+config PMIC_LBAT_SERVICE
+	tristate "PMIC lbat service"
+	select MTK_POWER_THROTTLING_COMMON
+	default m
+	help
+	  For MediaTek PMIC lbat service.
+
+config MTK_LOW_BATTERY_POWER_THROTTLING
+	tristate "MTK low battery throttle"
+	select MTK_POWER_THROTTLING_COMMON
+	select PMIC_LBAT_SERVICE
+	default m
+	help
+	  For MediaTek low battery power throttling.
+
+config MTK_BATTERY_OC_POWER_THROTTLING
+	tristate "MTK battery over current throttle"
+	select MTK_POWER_THROTTLING_COMMON
+	default m
+	help
+	  For MediaTek battery over current power throttling.
+
+config MTK_BATTERY_PERCENTAGE_POWER_THROTTLING
+	tristate "MTK battery percentage throttle"
+	select MTK_POWER_THROTTLING_COMMON
+	default m
+	help
+	  For MediaTek battery percentage power throttling.
+
+config MTK_DYNAMIC_LOADING_POWER_THROTTLING
+	tristate "MTK dynamic loading throttle"
+	select MTK_POWER_THROTTLING_COMMON
+	default m
+	help
+	  For MediaTek dynamic loading power throttling.

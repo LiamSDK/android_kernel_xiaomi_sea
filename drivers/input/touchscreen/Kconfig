@@ -1409,9 +1409,17 @@ config TOUCHSCREEN_FT3418_I2C
 	depends on TOUCHSCREEN_XIAOMI_TOUCH
 	select MTK_PANEL_EXT
 	select MTK_DISP_NOTIFY
+	select MTK_LCT_TP
 	default m
 	help
 	  Say Y or M here to enable support for FocalTech FT3418 I2C touchscreens
 	  as used on Xiaomi Redmi Note 12S (sea).
+
+config MTK_LCT_TP
+	tristate "Longcheer Touchscreen Helper Module"
+	default m
+	help
+	  Common touchpad gesture, grip area, work, and selftest helper
+	  for Longcheer / Xiaomi devices.
 
 endif

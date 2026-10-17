@@ -119,4 +119,6 @@ obj-$(CONFIG_TOUCHSCREEN_IQS7211)	+= iqs7211.o
 obj-$(CONFIG_TOUCHSCREEN_ZINITIX)	+= zinitix.o
 obj-$(CONFIG_TOUCHSCREEN_HIMAX_HX83112B)	+= himax_hx83112b.o
 obj-$(CONFIG_TOUCHSCREEN_XIAOMI_TOUCH)	+= xiaomi_touch.o
+lct_tp-y := lct_tp_info.o lct_tp_gesture.o lct_tp_grip_area.o lct_tp_palm.o lct_tp_selftest.o lct_tp_work.o
+obj-$(CONFIG_MTK_LCT_TP)	+= lct_tp.o
 obj-$(CONFIG_TOUCHSCREEN_FT3418_I2C)	+= ft3418_i2c/

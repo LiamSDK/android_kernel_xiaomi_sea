@@ -106,6 +106,17 @@ struct mtk_base_afe_dai;
 struct regmap;
 struct snd_pcm_substream;
 struct snd_soc_dai;
+struct dentry;
+struct mtk_afe_debug_cmd;
+
+typedef int (*mtk_sp_copy_f)(struct snd_pcm_substream *substream,
+			     int channel, unsigned long hwoff,
+			     void *buf, unsigned long bytes);
+
+static inline unsigned int word_size_align(unsigned int in_size)
+{
+	return in_size & ~0xf;
+}
 
 struct mtk_base_afe {
 	void __iomem *base_addr;
@@ -145,6 +156,14 @@ struct mtk_base_afe {
 	int (*release_dram_resource)(struct device *dev);
 
 	void *sram;
+	struct dentry *debugfs;
+	const struct mtk_afe_debug_cmd *debug_cmds;
+
+	int (*copy)(struct snd_pcm_substream *substream,
+		    int channel, unsigned long hwoff,
+		    void *buf, unsigned long bytes,
+		    mtk_sp_copy_f sp_copy);
+
 	void *platform_priv;
 };
 

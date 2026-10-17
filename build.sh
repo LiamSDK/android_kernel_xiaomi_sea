@@ -31,6 +31,7 @@ step()    { echo -e "\n${PURPLE}${BOLD}==>${WHITE} $*${NC}"; }
 # ------------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KERNEL_DIR="${SCRIPT_DIR}"
+cd "${KERNEL_DIR}"
 OUT_DIR="${KERNEL_DIR}/out"
 DIST_DIR="${OUT_DIR}/dist"
 MODULES_STAGING_DIR="${OUT_DIR}/modules_staging"
@@ -351,7 +352,7 @@ build_kernel() {
             local mod_name
             mod_name="$(basename "$mod")"
             cp -f "$mod" "${DIST_DIR}/modules/vendor/lib/modules/${mod_name}"
-            ((mod_count++))
+            mod_count=$((mod_count + 1))
         done < <(find "${MODULES_STAGING_DIR}" -name "*.ko" -type f)
 
         success "Collected and stripped ${mod_count} kernel modules into: ${DIST_DIR}/modules/vendor/lib/modules/"

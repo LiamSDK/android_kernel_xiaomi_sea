@@ -83,9 +83,9 @@ static struct mtk_spk_i2c_ctrl mtk_spk_list[MTK_SPK_TYPE_NUM] = {
 #endif /* CONFIG_SND_SOC_TFA9874 */
 };
 
-static int mtk_spk_i2c_probe(struct i2c_client *client,
-			     const struct i2c_device_id *id)
+static int mtk_spk_i2c_probe(struct i2c_client *client)
 {
+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
 	int i, ret = 0;
 
 	dev_info(&client->dev, "%s()\n", __func__);
@@ -106,14 +106,12 @@ static int mtk_spk_i2c_probe(struct i2c_client *client,
 	return ret;
 }
 
-static int mtk_spk_i2c_remove(struct i2c_client *client)
+static void mtk_spk_i2c_remove(struct i2c_client *client)
 {
 	dev_info(&client->dev, "%s()\n", __func__);
 
 	if (mtk_spk_list[mtk_spk_type].i2c_remove)
 		mtk_spk_list[mtk_spk_type].i2c_remove(client);
-
-	return 0;
 }
 
 static void mtk_spk_i2c_shutdown(struct i2c_client *client)
@@ -208,29 +206,33 @@ int mtk_spk_update_info(struct snd_soc_card *card,
 
 	/* find dai link of i2s in and i2s out */
 	for (i = 0; i < card->num_links; i++) {
+		const char *cpu_dai_name;
+
 		dai_link = &card->dai_link[i];
+		cpu_dai_name = (dai_link->cpus && dai_link->cpus->dai_name) ?
+			       dai_link->cpus->dai_name : "";
 
 		if (i2s_out_dai_link_idx < 0 &&
-		    strcmp(dai_link->cpu_dai_name, "I2S1") == 0 &&
+		    strcmp(cpu_dai_name, "I2S1") == 0 &&
 		    mtk_spk_i2s_out == MTK_SPK_I2S_1) {
 			i2s_out_dai_link_idx = i;
 		} else if (i2s_out_dai_link_idx < 0 &&
-			   strcmp(dai_link->cpu_dai_name, "I2S3") == 0 &&
+			   strcmp(cpu_dai_name, "I2S3") == 0 &&
 			   mtk_spk_i2s_out == MTK_SPK_I2S_3) {
 			i2s_out_dai_link_idx = i;
 		} else if (i2s_out_dai_link_idx < 0 &&
-			   strcmp(dai_link->cpu_dai_name, "I2S5") == 0 &&
+			   strcmp(cpu_dai_name, "I2S5") == 0 &&
 			   mtk_spk_i2s_out == MTK_SPK_I2S_5) {
 			i2s_out_dai_link_idx = i;
 		}
 
 		if (i2s_in_dai_link_idx < 0 &&
-		    strcmp(dai_link->cpu_dai_name, "I2S0") == 0 &&
+		    strcmp(cpu_dai_name, "I2S0") == 0 &&
 		    (mtk_spk_i2s_in == MTK_SPK_I2S_0 ||
 		     mtk_spk_i2s_in == MTK_SPK_TINYCONN_I2S_0)) {
 			i2s_in_dai_link_idx = i;
 		} else if (i2s_in_dai_link_idx < 0 &&
-			   strcmp(dai_link->cpu_dai_name, "I2S2") == 0 &&
+			   strcmp(cpu_dai_name, "I2S2") == 0 &&
 			   (mtk_spk_i2s_in == MTK_SPK_I2S_2 ||
 			    mtk_spk_i2s_in == MTK_SPK_TINYCONN_I2S_2)) {
 			i2s_in_dai_link_idx = i;
@@ -252,14 +254,18 @@ int mtk_spk_update_info(struct snd_soc_card *card,
 
 	if (mtk_spk_type != MTK_SPK_NOT_SMARTPA) {
 		dai_link = &card->dai_link[i2s_out_dai_link_idx];
-		dai_link->codec_name = NULL;
-		dai_link->codec_dai_name = NULL;
+		if (dai_link->codecs) {
+			dai_link->codecs->name = NULL;
+			dai_link->codecs->dai_name = NULL;
+		}
 		if (mck_num == mtk_spk_i2s_out)
 			dai_link->ops = i2s_ops;
 
 		dai_link = &card->dai_link[i2s_in_dai_link_idx];
-		dai_link->codec_name = NULL;
-		dai_link->codec_dai_name = NULL;
+		if (dai_link->codecs) {
+			dai_link->codecs->name = NULL;
+			dai_link->codecs->dai_name = NULL;
+		}
 		if (mck_num == mtk_spk_i2s_in)
 			dai_link->ops = i2s_ops;
 	}
@@ -335,29 +341,33 @@ int mtk_spk_update_dai_link(struct snd_soc_card *card,
 
 	/* find dai link of i2s in and i2s out */
 	for (i = 0; i < card->num_links; i++) {
+		const char *cpu_dai_name;
+
 		dai_link = &card->dai_link[i];
+		cpu_dai_name = (dai_link->cpus && dai_link->cpus->dai_name) ?
+			       dai_link->cpus->dai_name : "";
 
 		if (spk_dai_link_idx < 0 &&
-		    strcmp(dai_link->cpu_dai_name, "I2S1") == 0 &&
+		    strcmp(cpu_dai_name, "I2S1") == 0 &&
 		    mtk_spk_i2s_out == MTK_SPK_I2S_1) {
 			spk_dai_link_idx = i;
 		} else if (spk_dai_link_idx < 0 &&
-			   strcmp(dai_link->cpu_dai_name, "I2S3") == 0 &&
+			   strcmp(cpu_dai_name, "I2S3") == 0 &&
 			   mtk_spk_i2s_out == MTK_SPK_I2S_3) {
 			spk_dai_link_idx = i;
 		} else if (spk_dai_link_idx < 0 &&
-			   strcmp(dai_link->cpu_dai_name, "I2S5") == 0 &&
+			   strcmp(cpu_dai_name, "I2S5") == 0 &&
 			   mtk_spk_i2s_out == MTK_SPK_I2S_5) {
 			spk_dai_link_idx = i;
 		}
 
 		if (spk_ref_dai_link_idx < 0 &&
-		    strcmp(dai_link->cpu_dai_name, "I2S0") == 0 &&
+		    strcmp(cpu_dai_name, "I2S0") == 0 &&
 		    (mtk_spk_i2s_in == MTK_SPK_I2S_0 ||
 		     mtk_spk_i2s_in == MTK_SPK_TINYCONN_I2S_0)) {
 			spk_ref_dai_link_idx = i;
 		} else if (spk_ref_dai_link_idx < 0 &&
-			   strcmp(dai_link->cpu_dai_name, "I2S2") == 0 &&
+			   strcmp(cpu_dai_name, "I2S2") == 0 &&
 			   (mtk_spk_i2s_in == MTK_SPK_I2S_2 ||
 			    mtk_spk_i2s_in == MTK_SPK_TINYCONN_I2S_2)) {
 			spk_ref_dai_link_idx = i;
@@ -377,10 +387,12 @@ int mtk_spk_update_dai_link(struct snd_soc_card *card,
 	/* update spk codec dai name and codec name */
 	dai_link = &card->dai_link[spk_dai_link_idx];
 	dai_link->name = MTK_SPK_NAME;
-	dai_link->codec_dai_name =
-		mtk_spk_list[mtk_spk_type].codec_dai_name;
-	dai_link->codec_name =
-		mtk_spk_list[mtk_spk_type].codec_name;
+	if (dai_link->codecs) {
+		dai_link->codecs->dai_name =
+			mtk_spk_list[mtk_spk_type].codec_dai_name;
+		dai_link->codecs->name =
+			mtk_spk_list[mtk_spk_type].codec_name;
+	}
 	dai_link->ignore_pmdown_time = 1;
 	if (i2s_mck == mtk_spk_i2s_out)
 		dai_link->ops = i2s_ops;
@@ -388,16 +400,18 @@ int mtk_spk_update_dai_link(struct snd_soc_card *card,
 	dev_info(&pdev->dev,
 		 "%s(), %s, codec dai name = %s, codec name = %s, cpu dai name: %s\n",
 		 __func__, dai_link->name,
-		 dai_link->codec_dai_name,
-		 dai_link->codec_name,
-		 dai_link->cpu_dai_name);
+		 (dai_link->codecs ? dai_link->codecs->dai_name : "none"),
+		 (dai_link->codecs ? dai_link->codecs->name : "none"),
+		 (dai_link->cpus ? dai_link->cpus->dai_name : "none"));
 
 	dai_link = &card->dai_link[spk_ref_dai_link_idx];
 	dai_link->name = MTK_SPK_REF_NAME;
-	dai_link->codec_dai_name =
-		mtk_spk_list[mtk_spk_type].codec_dai_name;
-	dai_link->codec_name =
-		mtk_spk_list[mtk_spk_type].codec_name;
+	if (dai_link->codecs) {
+		dai_link->codecs->dai_name =
+			mtk_spk_list[mtk_spk_type].codec_dai_name;
+		dai_link->codecs->name =
+			mtk_spk_list[mtk_spk_type].codec_name;
+	}
 	dai_link->ignore_pmdown_time = 1;
 	if (i2s_mck == mtk_spk_i2s_in)
 		dai_link->ops = i2s_ops;
@@ -405,9 +419,9 @@ int mtk_spk_update_dai_link(struct snd_soc_card *card,
 	dev_info(&pdev->dev,
 		 "%s(), %s, codec dai name = %s, codec name = %s, cpu dai name: %s\n",
 		 __func__, dai_link->name,
-		 dai_link->codec_dai_name,
-		 dai_link->codec_name,
-		 dai_link->cpu_dai_name);
+		 (dai_link->codecs ? dai_link->codecs->dai_name : "none"),
+		 (dai_link->codecs ? dai_link->codecs->name : "none"),
+		 (dai_link->cpus ? dai_link->cpus->dai_name : "none"));
 
 
 	return 0;

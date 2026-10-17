@@ -3348,11 +3348,10 @@ static int mt6781_afe_pcm_platform_probe(struct snd_soc_component *platform)
 }
 
 const struct snd_soc_component_driver mt6781_afe_component = {
-	.name     = AFE_PCM_NAME,
-	.ops      = &mtk_afe_pcm_ops,
-	.pcm_new  = mtk_afe_pcm_new,
-	.pcm_free = mtk_afe_pcm_free,
-	.probe    = mt6781_afe_pcm_platform_probe,
+	.name		= AFE_PCM_NAME,
+	.pointer	= mtk_afe_pcm_pointer,
+	.pcm_construct	= mtk_afe_pcm_new,
+	.probe		= mt6781_afe_pcm_platform_probe,
 };
 
 static ssize_t mt6781_debugfs_read(struct file *file, char __user *buf,

@@ -19,3 +19,5 @@ obj-$(CONFIG_MTK_ECCCI_C2K) += c2k_usb/
 obj-$(CONFIG_MTK_AUDIO_IPI) += audio_ipi/
 obj-$(CONFIG_MTK_ELLIPTIC_ULTRASOUND) += elliptic/
 obj-y += sensors-1.0/
+obj-y += power_throttling/
+

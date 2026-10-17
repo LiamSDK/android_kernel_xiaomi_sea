@@ -692,6 +692,7 @@ void kernel_power_off(void)
 EXPORT_SYMBOL_GPL(kernel_power_off);
 
 DEFINE_MUTEX(system_transition_mutex);
+EXPORT_SYMBOL_GPL(system_transition_mutex);
 
 /*
  * Reboot system call: for obvious reasons only root may call it,

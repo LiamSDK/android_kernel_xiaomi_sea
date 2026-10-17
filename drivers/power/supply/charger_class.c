@@ -14,7 +14,14 @@
 
 #include "charger_class.h"
 
+touchscreen_usb_plugin_data_t g_touchscreen_usb_pulgin = {0};
+EXPORT_SYMBOL(g_touchscreen_usb_pulgin);
+
+struct charger_device *chg_dev_retry = NULL;
+EXPORT_SYMBOL(chg_dev_retry);
+
 static struct class *charger_class;
+
 
 static ssize_t name_show(struct device *dev,
 				    struct device_attribute *attr, char *buf)
@@ -53,6 +60,10 @@ EXPORT_SYMBOL(charger_dev_is_enabled);
 
 int charger_dev_plug_in(struct charger_device *chg_dev)
 {
+	g_touchscreen_usb_pulgin.usb_plugged_in = true;
+	if (g_touchscreen_usb_pulgin.valid && g_touchscreen_usb_pulgin.event_callback)
+		g_touchscreen_usb_pulgin.event_callback();
+
 	if (chg_dev != NULL && chg_dev->ops != NULL && chg_dev->ops->plug_in)
 		return chg_dev->ops->plug_in(chg_dev);
 
@@ -62,12 +73,17 @@ EXPORT_SYMBOL(charger_dev_plug_in);
 
 int charger_dev_plug_out(struct charger_device *chg_dev)
 {
+	g_touchscreen_usb_pulgin.usb_plugged_in = false;
+	if (g_touchscreen_usb_pulgin.valid && g_touchscreen_usb_pulgin.event_callback)
+		g_touchscreen_usb_pulgin.event_callback();
+
 	if (chg_dev != NULL && chg_dev->ops != NULL && chg_dev->ops->plug_out)
 		return chg_dev->ops->plug_out(chg_dev);
 
 	return -ENOTSUPP;
 }
 EXPORT_SYMBOL(charger_dev_plug_out);
+
 
 int charger_dev_do_event(struct charger_device *chg_dev, u32 event, u32 args)
 {
@@ -548,6 +564,8 @@ int charger_dev_notify(struct charger_device *chg_dev, int event)
 	return srcu_notifier_call_chain(
 		&chg_dev->evt_nh, event, &chg_dev->noti);
 }
+EXPORT_SYMBOL(charger_dev_notify);
+
 
 int charger_dev_enable_usbid(struct charger_device *charger_dev, bool en)
 {

@@ -1140,6 +1140,7 @@ void print_subsys_reg(char *subsys_name)
 			rns->name, PHYSADDR(rns), clk_readl(ADDR(rns)));
 	}
 }
+EXPORT_SYMBOL_GPL(print_subsys_reg);
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("MediaTek MT6781 Clock Debug Driver");

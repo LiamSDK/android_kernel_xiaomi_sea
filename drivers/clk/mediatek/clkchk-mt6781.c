@@ -730,6 +730,7 @@ void mtk_check_subsys_swcg(enum subsys_id id)
 		BUG_ON(1);
 	}
 }
+EXPORT_SYMBOL_GPL(mtk_check_subsys_swcg);
 
 static void __init pg_check_swcg_init_common(struct pg_check_swcg *swcg)
 {

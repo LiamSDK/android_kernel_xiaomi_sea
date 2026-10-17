@@ -1141,7 +1141,6 @@ static int fts_read_file(char *file_name, u8 **file_buf)
     char file_path[FILE_NAME_LENGTH] = { 0 };
     struct file *filp = NULL;
     struct inode *inode;
-    mm_segment_t old_fs;
     loff_t pos;
     loff_t file_len = 0;
 
@@ -1157,13 +1156,7 @@ static int fts_read_file(char *file_name, u8 **file_buf)
         return -ENOENT;
     }
 
-#if 1
     inode = filp->f_inode;
-#else
-    /* reserved for linux earlier verion */
-    inode = filp->f_dentry->d_inode;
-#endif
-
     file_len = inode->i_size;
     *file_buf = (u8 *)vmalloc(file_len);
     if (NULL == *file_buf) {
@@ -1171,15 +1164,13 @@ static int fts_read_file(char *file_name, u8 **file_buf)
         filp_close(filp, NULL);
         return -ENOMEM;
     }
-    old_fs = get_fs();
-    set_fs(KERNEL_DS);
+
     pos = 0;
-    ret = vfs_read(filp, *file_buf, file_len , &pos);
+    ret = kernel_read(filp, *file_buf, file_len, &pos);
     if (ret < 0)
         FTS_ERROR("read file fail");
     FTS_INFO("file len:%d read len:%d pos:%d", (u32)file_len, ret, (u32)pos);
     filp_close(filp, NULL);
-    set_fs(old_fs);
 
     return ret;
 }
@@ -2128,3 +2119,5 @@ int fts_fwupg_exit(struct fts_ts_data *ts_data)
     FTS_FUNC_EXIT();
     return 0;
 }
+
+MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);

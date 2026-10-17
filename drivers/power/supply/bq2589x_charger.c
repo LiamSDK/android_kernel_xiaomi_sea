@@ -296,7 +296,7 @@ static int bq2589x_disable_otg(struct bq2589x *bq)
 				   BQ2589X_OTG_CONFIG_MASK, val);
 }
 /* Huaqin add/modify/del for WXYFB-996 by miaozhichao at 2021/3/29 start */
-static int bq2589x_disable_maxcen(struct bq2589x *bq)
+int bq2589x_disable_maxcen(struct bq2589x *bq)
 {
 	int ret;
 	u8 val = BQ2589X_MAXC_DISABLE << BQ2589X_MAXCEN_SHIFT;
@@ -307,7 +307,7 @@ static int bq2589x_disable_maxcen(struct bq2589x *bq)
 }
 EXPORT_SYMBOL_GPL(bq2589x_disable_maxcen);
 /* Huaqin add/modify/del for WXYFB-996 by miaozhichao at 2021/3/29 end */
-static int bq2589x_enable_hvdcp(struct bq2589x *bq)
+int bq2589x_enable_hvdcp(struct bq2589x *bq)
 {
 	int ret;
 	u8 val = BQ2589X_HVDCP_ENABLE << BQ2589X_HVDCPEN_SHIFT;
@@ -318,7 +318,7 @@ static int bq2589x_enable_hvdcp(struct bq2589x *bq)
 }
 EXPORT_SYMBOL_GPL(bq2589x_enable_hvdcp);
 
-static int bq2589x_disable_hvdcp(struct bq2589x *bq)
+int bq2589x_disable_hvdcp(struct bq2589x *bq)
 {
 	int ret;
 	u8 val = BQ2589X_HVDCP_DISABLE << BQ2589X_HVDCPEN_SHIFT;
@@ -671,7 +671,7 @@ int bq2589x_get_hiz_mode(struct bq2589x *bq, u8 *state)
 }
 EXPORT_SYMBOL_GPL(bq2589x_get_hiz_mode);
 
-static int bq2589x_enable_term(struct charger_device *chg_dev, bool enable)
+int bq2589x_enable_term(struct charger_device *chg_dev, bool enable)
 {
 	u8 val;
 	int ret=0;
@@ -738,7 +738,7 @@ int bq2589x_set_boost_current(struct bq2589x *bq, int curr)
 
 }
 
-static int bq2589x_enable_auto_dpdm(struct bq2589x* bq, bool enable)
+int bq2589x_enable_auto_dpdm(struct bq2589x* bq, bool enable)
 {
 	u8 val;
 	int ret;
@@ -779,7 +779,7 @@ int bq2589x_set_boost_voltage(struct bq2589x *bq, int volt)
 }
 EXPORT_SYMBOL_GPL(bq2589x_set_boost_voltage);
 
-static int bq2589x_enable_ico(struct bq2589x* bq, bool enable)
+int bq2589x_enable_ico(struct bq2589x* bq, bool enable)
 {
 	u8 val;
 	int ret;
@@ -796,7 +796,7 @@ static int bq2589x_enable_ico(struct bq2589x* bq, bool enable)
 }
 EXPORT_SYMBOL_GPL(bq2589x_enable_ico);
 
-static int bq2589x_read_idpm_limit(struct bq2589x *bq)
+int bq2589x_read_idpm_limit(struct bq2589x *bq)
 {
 	uint8_t val;
 	int curr;
@@ -813,7 +813,7 @@ static int bq2589x_read_idpm_limit(struct bq2589x *bq)
 }
 EXPORT_SYMBOL_GPL(bq2589x_read_idpm_limit);
 
-static int bq2589x_enable_safety_timer(struct bq2589x *bq)
+int bq2589x_enable_safety_timer(struct bq2589x *bq)
 {
 	const u8 val = BQ2589X_CHG_TIMER_ENABLE << BQ2589X_EN_TIMER_SHIFT;
 
@@ -822,7 +822,7 @@ static int bq2589x_enable_safety_timer(struct bq2589x *bq)
 }
 EXPORT_SYMBOL_GPL(bq2589x_enable_safety_timer);
 
-static int bq2589x_disable_safety_timer(struct bq2589x *bq)
+int bq2589x_disable_safety_timer(struct bq2589x *bq)
 {
 	const u8 val = BQ2589X_CHG_TIMER_DISABLE << BQ2589X_EN_TIMER_SHIFT;
 
@@ -1762,8 +1762,7 @@ static struct of_device_id bq2589x_charger_match_table[] = {
 MODULE_DEVICE_TABLE(of, bq2589x_charger_match_table);
 
 
-static int bq2589x_charger_probe(struct i2c_client *client,
-				 const struct i2c_device_id *id)
+static int bq2589x_charger_probe(struct i2c_client *client)
 {
 	struct bq2589x *bq;
 	const struct of_device_id *match;
@@ -1830,15 +1829,13 @@ static int bq2589x_charger_probe(struct i2c_client *client,
 	return 0;
 }
 
-static int bq2589x_charger_remove(struct i2c_client *client)
+static void bq2589x_charger_remove(struct i2c_client *client)
 {
 	struct bq2589x *bq = i2c_get_clientdata(client);
 
 	mutex_destroy(&bq->i2c_rw_lock);
 
 	sysfs_remove_group(&bq->dev->kobj, &bq2589x_attr_group);
-
-	return 0;
 }
 
 static void bq2589x_charger_shutdown(struct i2c_client *client)

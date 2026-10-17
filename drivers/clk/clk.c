@@ -567,6 +567,7 @@ unsigned int __clk_get_enable_count(struct clk *clk)
 {
 	return !clk ? 0 : clk->core->enable_count;
 }
+EXPORT_SYMBOL_GPL(__clk_get_enable_count);
 
 static unsigned long clk_core_get_rate_nolock(struct clk_core *core)
 {
@@ -791,6 +792,7 @@ struct clk *__clk_lookup(const char *name)
 
 	return !core ? NULL : core->hw->clk;
 }
+EXPORT_SYMBOL_GPL(__clk_lookup);
 
 static void clk_core_get_boundaries(struct clk_core *core,
 				    unsigned long *min_rate,

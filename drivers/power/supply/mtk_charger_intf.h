@@ -30,8 +30,6 @@
 
 #include <linux/power_supply.h>
 
-#include <mtk_gauge_time_service.h>
-
 #include <mt-plat/v1/charger_class.h>
 
 struct charger_manager;
@@ -544,7 +542,7 @@ struct charger_manager {
 
 	/* alarm timer */
 	struct alarm charger_timer;
-	struct timespec endtime;
+	struct timespec64 endtime;
 	bool is_suspend;
 
 	struct wakeup_source *charger_wakelock;
@@ -630,7 +628,7 @@ struct charger_manager {
 	int			mode_bf;
 
 	/* plug in time*/
-	struct timespec plugintime;
+	struct timespec64 plugintime;
 
 	bool force_disable_pp[CHG2_SETTING + 1];
 	bool enable_pp[CHG2_SETTING + 1];

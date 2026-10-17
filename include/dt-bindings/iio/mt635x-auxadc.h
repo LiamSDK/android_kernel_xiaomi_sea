@@ -22,6 +22,9 @@
 #define AUXADC_HPOFS_CAL			0x0c
 #define AUXADC_DCXO_TEMP			0x0d
 #define AUXADC_VBIF				0x0e
+#define AUXADC_IMP				0x0f
+#define AUXADC_IMIX_R				0x10
+
 #define AUXADC_CHAN_MIN                         AUXADC_BATADC
 #if defined(CONFIG_MACH_MT6768)
 #define AUXADC_CHAN_MAX                         AUXADC_VBIF
@@ -38,9 +41,6 @@
 #elif defined(CONFIG_MACH_MT6873)
 #define AUXADC_CHAN_MAX                         AUXADC_VBIF
 #else
-#define AUXADC_IMP				0x0f
-#define AUXADC_IMIX_R				0x10
-
 #define AUXADC_CHAN_MAX				AUXADC_IMIX_R
 #endif
 

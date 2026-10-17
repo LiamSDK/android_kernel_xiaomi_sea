@@ -891,8 +891,8 @@ err:
 	return ret;
 }
 
-static int mt635x_auxadc_of_xlate(struct iio_dev *indio_dev,
-				  const struct of_phandle_args *iiospec)
+static int mt635x_auxadc_fwnode_xlate(struct iio_dev *indio_dev,
+				      const struct fwnode_reference_args *iiospec)
 {
 	int i;
 
@@ -906,7 +906,7 @@ static int mt635x_auxadc_of_xlate(struct iio_dev *indio_dev,
 
 static const struct iio_info mt635x_auxadc_info = {
 	.read_raw = &mt635x_auxadc_read_raw,
-	.of_xlate = &mt635x_auxadc_of_xlate,
+	.fwnode_xlate = &mt635x_auxadc_fwnode_xlate,
 };
 
 #if AUXADC_DEBUG

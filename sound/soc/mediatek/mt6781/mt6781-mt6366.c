@@ -409,7 +409,7 @@ static int mt6781_mt6366_mtkaif_calibration(struct snd_soc_pcm_runtime *rtd)
 	struct mtk_base_afe *afe = snd_soc_component_get_drvdata(component);
 	struct mt6781_afe_private *afe_priv = afe->platform_priv;
 	struct snd_soc_component *codec_component =
-		snd_soc_rtdcom_lookup(rtd, CODEC_MT6358_NAME);
+		asoc_rtd_to_codec(rtd, 0)->component;
 	int phase = 0;
 	unsigned int monitor = 0;
 	int test_done_1, test_done_2 = 0;
@@ -541,20 +541,13 @@ static int mt6781_mt6366_mtkaif_calibration(struct snd_soc_pcm_runtime *rtd)
 
 static int mt6781_mt6366_init(struct snd_soc_pcm_runtime *rtd)
 {
-	struct mt6358_codec_ops ops;
 	struct snd_soc_component *component =
 		snd_soc_rtdcom_lookup(rtd, AFE_PCM_NAME);
 	struct mtk_base_afe *afe = snd_soc_component_get_drvdata(component);
 	struct mt6781_afe_private *afe_priv = afe->platform_priv;
 	struct snd_soc_dapm_context *dapm = &rtd->card->dapm;
 	struct snd_soc_component *codec_component =
-		snd_soc_rtdcom_lookup(rtd, CODEC_MT6358_NAME);
-
-	ops.enable_dc_compensation = mt6781_enable_dc_compensation;
-	ops.set_lch_dc_compensation = mt6781_set_lch_dc_compensation;
-	ops.set_rch_dc_compensation = mt6781_set_rch_dc_compensation;
-	ops.adda_dl_gain_control = mt6781_adda_dl_gain_control;
-	mt6358_set_codec_ops(codec_component, &ops);
+		asoc_rtd_to_codec(rtd, 0)->component;
 
 	/* set mtkaif protocol */
 	mt6358_set_mtkaif_protocol(codec_component,
@@ -647,640 +640,768 @@ static const struct snd_soc_ops mt6781_mt6366_vow_ops = {
 };
 #endif  // #ifdef CONFIG_MTK_VOW_SUPPORT
 
+SND_SOC_DAILINK_DEFS(daifmt_playback_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_12,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL12")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_3,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL3")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_4,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL4")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_5,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL5")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_6,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL6")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_7,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL7")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_playback_8,
+		     DAILINK_COMP_ARRAY(COMP_CPU("DL8")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_3,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL3")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_4,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL4")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_5,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL5")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_6,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL6")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_7,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL7")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_8,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL8")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_mono_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL_MONO_1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_mono_2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL_MONO_2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_capture_mono_3,
+		     DAILINK_COMP_ARRAY(COMP_CPU("UL_MONO_3")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_lpbk,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless LPBK DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_fm,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless FM DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_speech,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless Speech DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_sph_echo_ref,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_Sph_Echo_Ref_DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_spk_init,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_Spk_Init_DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_adda_dl_i2s_out,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_ADDA_DL_I2S_OUT DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_src_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_SRC_1_DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_src_bargein,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_SRC_Bargein_DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_primary_codec,
+		     DAILINK_COMP_ARRAY(COMP_CPU("ADDA")),
+		     DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "mt6358-snd-codec-aif1")),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_i2s3,
+		     DAILINK_COMP_ARRAY(COMP_CPU("I2S3")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_i2s0,
+		     DAILINK_COMP_ARRAY(COMP_CPU("I2S0")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_i2s1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("I2S1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_i2s2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("I2S2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hw_gain_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("HW Gain 1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hw_gain_2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("HW Gain 2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hw_src_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("HW_SRC_1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hw_src_2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("HW_SRC_2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_connsys_i2s,
+		     DAILINK_COMP_ARRAY(COMP_CPU("CONNSYS_I2S")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_pcm_1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("PCM 1")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_pcm_2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("PCM 2")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_ul1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_UL1 DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_ul2,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_UL2 DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_ul3,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_UL3 DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_ul6,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless_UL6 DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_hw_gain_aaudio,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless HW Gain AAudio DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_hostless_src_aaudio,
+		     DAILINK_COMP_ARRAY(COMP_CPU("Hostless SRC AAudio DAI")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+#ifdef CONFIG_SND_SOC_MTK_BTCVSD
+SND_SOC_DAILINK_DEFS(daifmt_btcvsd,
+		     DAILINK_COMP_ARRAY(COMP_CPU("snd-soc-dummy-dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_PLATFORM("18050000.mtk-btcvsd-snd")));
+#endif
+#if defined(CONFIG_SND_SOC_MTK_AUDIO_DSP)
+SND_SOC_DAILINK_DEFS(daifmt_offload_playback,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_offload_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_PLATFORM("mt_soc_offload_common")));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_voip,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_voip_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_primary,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_primary_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_deepbuf,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_deepbuf_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_playback,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_Playback_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_capture_ul1,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_capture_ul1_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_call_final,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_call_final_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_fast,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_fast_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_ktv,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_ktv_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_capture_raw,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_capture_raw_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_PLATFORM("snd_audio_dsp")));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_fm_adsp,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_fm_adsp_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+SND_SOC_DAILINK_DEFS(daifmt_dsp_playback_a2dp,
+		     DAILINK_COMP_ARRAY(COMP_CPU("audio_task_a2dp_dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+#endif
+#ifdef CONFIG_MTK_VOW_SUPPORT
+SND_SOC_DAILINK_DEFS(daifmt_vow_capture,
+		     DAILINK_COMP_ARRAY(COMP_CPU("snd-soc-dummy-dai")),
+		     DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "mt6358-snd-codec-vow")),
+		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+#endif  // #ifdef CONFIG_MTK_VOW_SUPPORT
+#if defined(CONFIG_SND_SOC_MTK_SCP_SMARTPA)
+SND_SOC_DAILINK_DEFS(daifmt_scp_spk_playback,
+		     DAILINK_COMP_ARRAY(COMP_CPU("snd-soc-dummy-dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_PLATFORM("snd_scp_spk")));
+#endif
+#if defined(CONFIG_MTK_ULTRASND_PROXIMITY)
+SND_SOC_DAILINK_DEFS(daifmt_scp_ultra_playback,
+		     DAILINK_COMP_ARRAY(COMP_CPU("snd-soc-dummy-dai")),
+		     DAILINK_COMP_ARRAY(COMP_DUMMY()),
+		     DAILINK_COMP_ARRAY(COMP_PLATFORM("snd_scp_ultra")));
+#endif
+
 static struct snd_soc_dai_link mt6781_mt6366_dai_links[] = {
-	/* Front End DAI links */
 	{
 		.name = "Playback_1",
 		.stream_name = "Playback_1",
-		.cpu_dai_name = "DL1",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_1),
 	},
 	{
 		.name = "Playback_12",
 		.stream_name = "Playback_12",
-		.cpu_dai_name = "DL12",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_12),
 	},
 	{
 		.name = "Playback_2",
 		.stream_name = "Playback_2",
-		.cpu_dai_name = "DL2",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_2),
 	},
 	{
 		.name = "Playback_3",
 		.stream_name = "Playback_3",
-		.cpu_dai_name = "DL3",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_3),
 	},
 	{
 		.name = "Playback_4",
 		.stream_name = "Playback_4",
-		.cpu_dai_name = "DL4",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_4),
 	},
 	{
 		.name = "Playback_5",
 		.stream_name = "Playback_5",
-		.cpu_dai_name = "DL5",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_5),
 	},
 	{
 		.name = "Playback_6",
 		.stream_name = "Playback_6",
-		.cpu_dai_name = "DL6",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_6),
 	},
 	{
 		.name = "Playback_7",
 		.stream_name = "Playback_7",
-		.cpu_dai_name = "DL7",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_7),
 	},
 	{
 		.name = "Playback_8",
 		.stream_name = "Playback_8",
-		.cpu_dai_name = "DL8",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
+		SND_SOC_DAILINK_REG(daifmt_playback_8),
 	},
 	{
 		.name = "Capture_1",
 		.stream_name = "Capture_1",
-		.cpu_dai_name = "UL1",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_1),
 	},
 	{
 		.name = "Capture_2",
 		.stream_name = "Capture_2",
-		.cpu_dai_name = "UL2",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_2),
 	},
 	{
 		.name = "Capture_3",
 		.stream_name = "Capture_3",
-		.cpu_dai_name = "UL3",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_3),
 	},
 	{
 		.name = "Capture_4",
 		.stream_name = "Capture_4",
-		.cpu_dai_name = "UL4",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_4),
 	},
 	{
 		.name = "Capture_5",
 		.stream_name = "Capture_5",
-		.cpu_dai_name = "UL5",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_5),
 	},
 	{
 		.name = "Capture_6",
 		.stream_name = "Capture_6",
-		.cpu_dai_name = "UL6",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_6),
 	},
 	{
 		.name = "Capture_7",
 		.stream_name = "Capture_7",
-		.cpu_dai_name = "UL7",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_7),
 	},
 	{
 		.name = "Capture_8",
 		.stream_name = "Capture_8",
-		.cpu_dai_name = "UL8",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_8),
 	},
 	{
 		.name = "Capture_Mono_1",
 		.stream_name = "Capture_Mono_1",
-		.cpu_dai_name = "UL_MONO_1",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_mono_1),
 	},
 	{
 		.name = "Capture_Mono_2",
 		.stream_name = "Capture_Mono_2",
-		.cpu_dai_name = "UL_MONO_2",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_mono_2),
 	},
 	{
 		.name = "Capture_Mono_3",
 		.stream_name = "Capture_Mono_3",
-		.cpu_dai_name = "UL_MONO_3",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
+		SND_SOC_DAILINK_REG(daifmt_capture_mono_3),
 	},
 	{
 		.name = "Hostless_LPBK",
 		.stream_name = "Hostless_LPBK",
-		.cpu_dai_name = "Hostless LPBK DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_lpbk),
 	},
 	{
 		.name = "Hostless_FM",
 		.stream_name = "Hostless_FM",
-		.cpu_dai_name = "Hostless FM DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_fm),
 	},
 	{
 		.name = "Hostless_Speech",
 		.stream_name = "Hostless_Speech",
-		.cpu_dai_name = "Hostless Speech DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_speech),
 	},
 	{
 		.name = "Hostless_Sph_Echo_Ref",
 		.stream_name = "Hostless_Sph_Echo_Ref",
-		.cpu_dai_name = "Hostless_Sph_Echo_Ref_DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_sph_echo_ref),
 	},
 	{
 		.name = "Hostless_Spk_Init",
 		.stream_name = "Hostless_Spk_Init",
-		.cpu_dai_name = "Hostless_Spk_Init_DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_spk_init),
 	},
 	{
 		.name = "Hostless_ADDA_DL_I2S_OUT",
 		.stream_name = "Hostless_ADDA_DL_I2S_OUT",
-		.cpu_dai_name = "Hostless_ADDA_DL_I2S_OUT DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_adda_dl_i2s_out),
 	},
 	{
 		.name = "Hostless_SRC_1",
 		.stream_name = "Hostless_SRC_1",
-		.cpu_dai_name = "Hostless_SRC_1_DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_src_1),
 	},
 	{
 		.name = "Hostless_SRC_Bargein",
 		.stream_name = "Hostless_SRC_Bargein",
-		.cpu_dai_name = "Hostless_SRC_Bargein_DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_src_bargein),
 	},
-	/* Back End DAI links */
 	{
 		.name = "Primary Codec",
-		.cpu_dai_name = "ADDA",
-		.codec_dai_name = "mt6358-snd-codec-aif1",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
 		.init = mt6781_mt6366_init,
+		SND_SOC_DAILINK_REG(daifmt_primary_codec),
 	},
 	{
 		.name = "I2S3",
-		.cpu_dai_name = "I2S3",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.ignore_suspend = 1,
 		.be_hw_params_fixup = mt6781_i2s_hw_params_fixup,
+		SND_SOC_DAILINK_REG(daifmt_i2s3),
 	},
 	{
 		.name = "I2S0",
-		.cpu_dai_name = "I2S0",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
 		.be_hw_params_fixup = mt6781_i2s_hw_params_fixup,
+		SND_SOC_DAILINK_REG(daifmt_i2s0),
 	},
 	{
 		.name = "I2S1",
-		.cpu_dai_name = "I2S1",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.ignore_suspend = 1,
 		.be_hw_params_fixup = mt6781_i2s_hw_params_fixup,
+		SND_SOC_DAILINK_REG(daifmt_i2s1),
 	},
 	{
 		.name = "I2S2",
-		.cpu_dai_name = "I2S2",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
 		.be_hw_params_fixup = mt6781_i2s_hw_params_fixup,
+		SND_SOC_DAILINK_REG(daifmt_i2s2),
 	},
 	{
 		.name = "HW Gain 1",
-		.cpu_dai_name = "HW Gain 1",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hw_gain_1),
 	},
 	{
 		.name = "HW Gain 2",
-		.cpu_dai_name = "HW Gain 2",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hw_gain_2),
 	},
 	{
 		.name = "HW_SRC_1",
-		.cpu_dai_name = "HW_SRC_1",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hw_src_1),
 	},
 	{
 		.name = "HW_SRC_2",
-		.cpu_dai_name = "HW_SRC_2",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hw_src_2),
 	},
 	{
 		.name = "CONNSYS_I2S",
-		.cpu_dai_name = "CONNSYS_I2S",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_connsys_i2s),
 	},
 	{
 		.name = "PCM 1",
-		.cpu_dai_name = "PCM 1",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_pcm_1),
 	},
 	{
 		.name = "PCM 2",
-		.cpu_dai_name = "PCM 2",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.no_pcm = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_pcm_2),
 	},
-	/* dummy BE for ul memif to record from dl memif */
 	{
 		.name = "Hostless_UL1",
-		.cpu_dai_name = "Hostless_UL1 DAI",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_ul1),
 	},
 	{
 		.name = "Hostless_UL2",
-		.cpu_dai_name = "Hostless_UL2 DAI",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_ul2),
 	},
 	{
 		.name = "Hostless_UL3",
-		.cpu_dai_name = "Hostless_UL3 DAI",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_ul3),
 	},
 	{
 		.name = "Hostless_UL6",
-		.cpu_dai_name = "Hostless_UL6 DAI",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_ul6),
 	},
 	{
 		.name = "Hostless_HW_Gain_AAudio",
 		.stream_name = "Hostless_HW_Gain_AAudio",
-		.cpu_dai_name = "Hostless HW Gain AAudio DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_hw_gain_aaudio),
 	},
 	{
 		.name = "Hostless_SRC_AAudio",
 		.stream_name = "Hostless_SRC_AAudio",
-		.cpu_dai_name = "Hostless SRC AAudio DAI",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
 		.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
 			    SND_SOC_DPCM_TRIGGER_PRE},
 		.dynamic = 1,
 		.dpcm_playback = 1,
 		.dpcm_capture = 1,
 		.ignore_suspend = 1,
+		SND_SOC_DAILINK_REG(daifmt_hostless_src_aaudio),
 	},
-	/* BTCVSD */
 #ifdef CONFIG_SND_SOC_MTK_BTCVSD
 	{
 		.name = "BTCVSD",
 		.stream_name = "BTCVSD",
-		.cpu_dai_name   = "snd-soc-dummy-dai",
-		.platform_name  = "18050000.mtk-btcvsd-snd",
-		.codec_dai_name = "snd-soc-dummy-dai",
-		.codec_name = "snd-soc-dummy",
+		SND_SOC_DAILINK_REG(daifmt_btcvsd),
 	},
 #endif
 #if defined(CONFIG_SND_SOC_MTK_AUDIO_DSP)
 	{
 		.name = "Offload_Playback",
 		.stream_name = "Offload_Playback",
-		.cpu_dai_name = "audio_task_offload_dai",
-		.platform_name = "mt_soc_offload_common",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_offload_playback),
 	},
 	{
 		.name = "DSP_Playback_Voip",
 		.stream_name = "DSP_Playback_Voip",
-		.cpu_dai_name = "audio_task_voip_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_voip),
 	},
 	{
 		.name = "DSP_Playback_Primary",
 		.stream_name = "DSP_Playback_Primary",
-		.cpu_dai_name = "audio_task_primary_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_primary),
 	},
 	{
 		.name = "DSP_Playback_DeepBuf",
 		.stream_name = "DSP_Playback_DeepBuf",
-		.cpu_dai_name = "audio_task_deepbuf_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_deepbuf),
 	},
 	{
 		.name = "DSP_Playback_Playback",
 		.stream_name = "DSP_Playback_Playback",
-		.cpu_dai_name = "audio_task_Playback_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_playback),
 	},
 	{
 		.name = "DSP_Capture_Ul1",
 		.stream_name = "DSP_Capture_Ul1",
-		.cpu_dai_name = "audio_task_capture_ul1_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_capture_ul1),
 	},
 	{
 		.name = "DSP_Call_Final",
 		.stream_name = "DSP_Call_Final",
-		.cpu_dai_name = "audio_task_call_final_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_call_final),
 	},
 	{
 		.name = "DSP_Playback_Fast",
 		.stream_name = "DSP_Playback_Fast",
-		.cpu_dai_name = "audio_task_fast_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_fast),
 	},
 	{
 		.name = "DSP_Playback_Ktv",
 		.stream_name = "DSP_Playback_Ktv",
-		.cpu_dai_name = "audio_task_ktv_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_ktv),
 	},
 	{
 		.name = "DSP_Capture_Raw",
 		.stream_name = "DSP_Capture_Raw",
-		.cpu_dai_name = "audio_task_capture_raw_dai",
-		.platform_name = "snd_audio_dsp",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_capture_raw),
 	},
 	{
 		.name = "DSP_Playback_Fm_Adsp",
 		.stream_name = "DSP_Playback_Fm_Adsp",
-		.cpu_dai_name = "audio_task_fm_adsp_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_fm_adsp),
 	},
 	{
 		.name = "DSP_Playback_A2DP",
 		.stream_name = "DSP_Playback_A2DP",
-		.cpu_dai_name = "audio_task_a2dp_dai",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_dsp_playback_a2dp),
 	},
 #endif
 #ifdef CONFIG_MTK_VOW_SUPPORT
 	{
 		.name = "VOW_Capture",
 		.stream_name = "VOW_Capture",
-		.cpu_dai_name = "snd-soc-dummy-dai",
-		.codec_dai_name = "mt6358-snd-codec-vow",
 		.ignore_suspend = 1,
 		.ops = &mt6781_mt6366_vow_ops,
+		SND_SOC_DAILINK_REG(daifmt_vow_capture),
 	},
 #endif  // #ifdef CONFIG_MTK_VOW_SUPPORT
 #if defined(CONFIG_SND_SOC_MTK_SCP_SMARTPA)
 	{
 		.name = "SCP_SPK_Playback",
 		.stream_name = "SCP_SPK_Playback",
-		.cpu_dai_name = "snd-soc-dummy-dai",
-		.platform_name = "snd_scp_spk",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_scp_spk_playback),
 	},
 #endif
 #if defined(CONFIG_MTK_ULTRASND_PROXIMITY)
 	{
 		.name = "SCP_ULTRA_Playback",
 		.stream_name = "SCP_ULTRA_Playback",
-		.cpu_dai_name = "snd-soc-dummy-dai",
-		.platform_name = "snd_scp_ultra",
-		.codec_name = "snd-soc-dummy",
-		.codec_dai_name = "snd-soc-dummy-dai",
+		SND_SOC_DAILINK_REG(daifmt_scp_ultra_playback),
 	},
 #endif
 };
@@ -1323,8 +1444,8 @@ static int mt6781_mt6366_dev_probe(struct platform_device *pdev)
 
 	spk_out_dai_link = &mt6781_mt6366_dai_links[spk_out_dai_link_idx];
 	spk_iv_dai_link = &mt6781_mt6366_dai_links[spk_iv_dai_link_idx];
-	if (!spk_out_dai_link->codec_dai_name &&
-	    !spk_iv_dai_link->codec_dai_name) {
+	if (!spk_out_dai_link->codecs->dai_name &&
+	    !spk_iv_dai_link->codecs->dai_name) {
 		spk_node = of_get_child_by_name(pdev->dev.of_node,
 					"mediatek,speaker-codec");
 		if (!spk_node) {
@@ -1363,16 +1484,16 @@ static int mt6781_mt6366_dev_probe(struct platform_device *pdev)
 		dev_info(&pdev->dev, "Property 'snd_audio_dsp' missing or invalid\n");
 
 	for (i = 0; i < card->num_links; i++) {
-		if (mt6781_mt6366_dai_links[i].platform_name)
+		if (mt6781_mt6366_dai_links[i].platforms->name)
 			continue;
 		/* no platform assign and with dsp playback node. */
 		name = mt6781_mt6366_dai_links[i].name;
 		if (!strncmp(name, "DSP", strlen("DSP")) &&
-		    mt6781_mt6366_dai_links[i].platform_name == NULL) {
-			mt6781_mt6366_dai_links[i].platform_of_node = dsp_node;
+		    mt6781_mt6366_dai_links[i].platforms->name == NULL) {
+			mt6781_mt6366_dai_links[i].platforms->of_node = dsp_node;
 			continue;
 		}
-		mt6781_mt6366_dai_links[i].platform_of_node = platform_node;
+		mt6781_mt6366_dai_links[i].platforms->of_node = platform_node;
 	}
 
 	dev_info(&pdev->dev, "%s(), update audio-codec dai\n", __func__);
@@ -1385,11 +1506,11 @@ static int mt6781_mt6366_dev_probe(struct platform_device *pdev)
 		return -EINVAL;
 	}
 	for (i = 0; i < card->num_links; i++) {
-		if (mt6781_mt6366_dai_links[i].codec_name ||
+		if (mt6781_mt6366_dai_links[i].codecs->name ||
 		    i == spk_out_dai_link_idx ||
 		    i == spk_iv_dai_link_idx)
 			continue;
-		mt6781_mt6366_dai_links[i].codec_of_node = codec_node;
+		mt6781_mt6366_dai_links[i].codecs->of_node = codec_node;
 	}
 
 	card->dev = &pdev->dev;
